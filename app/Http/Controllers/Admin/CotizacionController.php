@@ -8,16 +8,40 @@ use App\Models\CotizacionDetalle;
 use App\Models\Cliente;
 use App\Models\Producto;
 use App\Models\Inventario;
+use App\Services\InventarioService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CotizacionController extends Controller
 {
-    // Lista de cotizaciones
-    public function index()
+    protected $inventarioService;
+
+    public function __construct(InventarioService $inventarioService)
     {
-        $cotizaciones = Cotizacion::with(['cliente', 'user'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $this->inventarioService = $inventarioService;
+    }
+
+    // Lista de cotizaciones
+    public function index(Request $request)
+    {
+        $query = Cotizacion::with(['cliente', 'user'])
+            ->orderBy('created_at', 'desc');
+
+        // Búsqueda por número, nombre o cliente
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('numero', 'LIKE', "%{$search}%")
+                  ->orWhere('nombre', 'LIKE', "%{$search}%")
+                  ->orWhereHas('cliente', fn($c) => $c->where('nombre', 'LIKE', "%{$search}%"));
+            });
+        }
+
+        // Filtro por estado
+        if ($estado = $request->input('estado')) {
+            $query->where('estado', $estado);
+        }
+
+        $cotizaciones = $query->paginate(15)->withQueryString();
 
         return view('admin.cotizaciones.index', compact('cotizaciones'));
     }
@@ -25,23 +49,30 @@ class CotizacionController extends Controller
     // Formulario nueva cotización
     public function create()
     {
-        $numero   = Cotizacion::generarNumero();
         $clientes = Cliente::where('activo', true)->orderBy('nombre')->get();
-        $productos = Producto::orderBy('nombre')->get();
+        
+        // Solo enviamos a la vista los productos que tienen stock > 0 y no están vencidos
+        $productos = Producto::whereHas('inventarios', function($q) {
+            $q->where('cantidad', '>', 0)
+              ->where('estado', '!=', 'vencido');
+        })->orderBy('nombre')->get();
 
-        return view('admin.cotizaciones.create', compact('numero', 'clientes', 'productos'));
+        return view('admin.cotizaciones.create', compact('clientes', 'productos'));
     }
 
     // Guardar cotización
     public function store(Request $request)
     {
         $request->validate([
-            'numero'     => 'required|unique:cotizaciones,numero',
-            'cliente_id' => 'required|exists:clientes,id',
-            'items'      => 'required|array|min:1',
+            'numero'               => 'required|unique:cotizaciones,numero',
+            'cliente_id'           => 'required|exists:clientes,id',
+            'items'                => 'required|array|min:1',
+            'items.*.producto_id'  => 'required|exists:productos,id',
+            'items.*.cantidad'     => 'required|integer|min:1',
+            'items.*.precio_unitario' => 'required|numeric|min:0',
         ]);
 
-        try {
+        return DB::transaction(function () use ($request) {
             $cotizacion = Cotizacion::create([
                 'numero'     => $request->numero,
                 'nombre'     => $request->numero, // usamos el numero como nombre
@@ -56,42 +87,23 @@ class CotizacionController extends Controller
                 $precioTotal = $item['cantidad'] * $item['precio_unitario'];
                 $total += $precioTotal;
 
+                // ── DESCUENTO FIFO (PEPS) DESDE EL SERVICIO ───────────
+                $lotesDescontados = $this->inventarioService->descontarStockProducto(
+                    $item['producto_id'], 
+                    $item['cantidad']
+                );
+
                 CotizacionDetalle::create([
-                    'cotizacion_id'   => $cotizacion->id,
-                    'producto_id'     => $item['producto_id'],
-                    'inventario_id'   => !empty($item['inventario_id']) ? $item['inventario_id'] : null,
-                    'lote'            => $item['lote'] ?? 'S/L',
-                    'nro_item'        => $nro + 1,
-                    'cantidad'        => $item['cantidad'],
-                    'precio_unitario' => $item['precio_unitario'],
-                    'precio_total'    => $precioTotal,
+                    'cotizacion_id'     => $cotizacion->id,
+                    'producto_id'       => $item['producto_id'],
+                    'inventario_id'     => null, // Ahora usamos lotes_descontados
+                    'lote'              => $item['lote'] ?? 'S/L',
+                    'lotes_descontados' => $lotesDescontados,
+                    'nro_item'          => $nro + 1,
+                    'cantidad'          => $item['cantidad'],
+                    'precio_unitario'   => $item['precio_unitario'],
+                    'precio_total'      => $precioTotal,
                 ]);
-
-                // ── DESCUENTO FIFO DEL INVENTARIO ──────────────────────
-                $cantidadRestante = $item['cantidad'];
-                $productoId = $item['producto_id'];
-
-                // Traemos los lotes del producto ordenados por fecha de ingreso (FIFO)
-                $lotes = Inventario::where('producto_id', $productoId)
-                    ->where('cantidad', '>', 0)
-                    ->where('estado', '!=', 'vencido')
-                    ->orderBy('created_at', 'asc')
-                    ->get();
-
-                foreach ($lotes as $lote) {
-                    if ($cantidadRestante <= 0) break;
-
-                    if ($lote->cantidad >= $cantidadRestante) {
-                        // Este lote tiene suficiente stock
-                        $lote->decrement('cantidad', $cantidadRestante);
-                        $cantidadRestante = 0;
-                    } else {
-                        // Este lote no alcanza, lo vaciamos y seguimos al siguiente
-                        $cantidadRestante -= $lote->cantidad;
-                        $lote->update(['cantidad' => 0]);
-                    }
-                }
-                // ── FIN FIFO ────────────────────────────────────────────
             }
 
             $cotizacion->update(['total' => $total]);
@@ -100,12 +112,7 @@ class CotizacionController extends Controller
                 'success' => true,
                 'id'      => $cotizacion->id,
             ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error'   => $e->getMessage(),
-            ], 500);
-        }
+        });
     }
 
     // Ver cotización
@@ -144,18 +151,45 @@ class CotizacionController extends Controller
 
         return response()->json($lotes);
     }
+
     public function destroy($id)
     {
-        try {
+        return DB::transaction(function () use ($id) {
             $cotizacion = Cotizacion::findOrFail($id);
             $cotizacion->detalles()->delete();
             $cotizacion->delete();
 
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
-        }
+        });
     }
+
+    public function anular($id)
+    {
+        return DB::transaction(function () use ($id) {
+            $cotizacion = Cotizacion::with('detalles')->findOrFail($id);
+
+            if ($cotizacion->estado === 'anulada') {
+                return response()->json(['success' => false, 'error' => 'La cotización ya está anulada.']);
+            }
+
+            // Devolver stock a los lotes originales
+            foreach ($cotizacion->detalles as $detalle) {
+                if (!empty($detalle->lotes_descontados) && is_array($detalle->lotes_descontados)) {
+                    foreach ($detalle->lotes_descontados as $loteDesc) {
+                        $inventario = Inventario::find($loteDesc['id']);
+                        if ($inventario) {
+                            $inventario->increment('cantidad', $loteDesc['cantidad']);
+                        }
+                    }
+                }
+            }
+
+            $cotizacion->update(['estado' => 'anulada']);
+
+            return response()->json(['success' => true]);
+        });
+    }
+
     public function stockTotal(Request $request)
     {
         $productoId = $request->producto_id;
@@ -167,6 +201,7 @@ class CotizacionController extends Controller
 
         return response()->json(['stock' => $stock]);
     }
+
     public function pdf($id)
     {
         $cotizacion = Cotizacion::with(['cliente', 'user', 'detalles.producto'])

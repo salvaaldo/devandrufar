@@ -20,7 +20,7 @@ class UpdateUserRequest extends FormRequest
             'ci'       => ['required', 'string', 'max:20', 'unique:users,ci,' . $userId],
             'telefono' => ['nullable', 'string', 'max:20'],
             'email'    => ['required', 'email', 'unique:users,email,' . $userId],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'],
+            'password' => ['nullable', 'string', 'min:6', 'confirmed'],
             'rol'      => ['required', 'in:admin,operador'],
         ];
     }
@@ -33,8 +33,7 @@ class UpdateUserRequest extends FormRequest
             'ci.unique'          => 'Ya existe un usuario con esa CI.',
             'email.required'     => 'El correo es obligatorio.',
             'email.unique'       => 'Ya existe un usuario con ese correo.',
-            'password.regex' => 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&).',
-            'password.min'   => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.min'   => 'La contraseña debe tener al menos 6 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
             'rol.required'       => 'El rol es obligatorio.',
             'rol.in'             => 'El rol debe ser admin u operador.',

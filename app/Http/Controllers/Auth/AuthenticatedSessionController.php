@@ -28,7 +28,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // 🔔 Actualizar estados de inventario al iniciar sesión
+        try {
+            app(\App\Services\InventarioService::class)->actualizarEstados();
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error("Error al actualizar inventario en login: " . $e->getMessage());
+        }
+
+        return redirect()->intended(route('dashboard', absolute: false))->with('login_success', true);
     }
 
     /**

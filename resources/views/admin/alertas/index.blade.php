@@ -4,292 +4,430 @@
 
 @section('content')
 
-<!-- Header -->
-<div class="mb-8">
-    <div class="flex items-center justify-between">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+    .alertas-wrap { font-family: 'DM Sans', sans-serif; }
+
+    /* Header */
+    .alertas-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .alertas-title {
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #111827;
+        letter-spacing: -0.02em;
+    }
+    .alertas-subtitle {
+        font-size: 0.82rem;
+        color: #9ca3af;
+        margin-top: 0.2rem;
+        font-weight: 400;
+    }
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: #374151;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+    .btn-back:hover { background: #f9fafb; border-color: #d1d5db; }
+
+    /* Summary cards */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+    .summary-card {
+        border-radius: 14px;
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .summary-card::before {
+        content: '';
+        position: absolute;
+        top: -30px; right: -30px;
+        width: 100px; height: 100px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+    }
+    .summary-card.vencidos { background: linear-gradient(135deg, #dc2626, #b91c1c); }
+    .summary-card.por-vencer { background: linear-gradient(135deg, #d97706, #b45309); }
+
+    .card-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 0.5rem;
+    }
+    .card-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+        font-family: 'DM Mono', monospace;
+    }
+    .card-desc {
+        font-size: 0.78rem;
+        color: rgba(255,255,255,0.65);
+        margin-top: 0.75rem;
+    }
+
+    /* Section */
+    .section-block {
+        background: #fff;
+        border-radius: 14px;
+        border: 1px solid #f0f0f0;
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    }
+    .section-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1rem 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .section-head-left {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .section-icon {
+        width: 36px; height: 36px;
+        border-radius: 9px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .section-icon.red { background: #fef2f2; }
+    .section-icon.yellow { background: #fffbeb; }
+    .section-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #111827;
+    }
+    .section-count {
+        font-size: 0.75rem;
+        color: #9ca3af;
+        margin-top: 0.1rem;
+    }
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: 7px;
+        font-size: 0.78rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.15s;
+    }
+    .btn-action.red { background: #fef2f2; color: #dc2626; }
+    .btn-action.red:hover { background: #fee2e2; }
+    .btn-action.yellow { background: #fffbeb; color: #d97706; }
+    .btn-action.yellow:hover { background: #fef3c7; }
+
+    /* Table */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .data-table thead tr { background: #fafafa; }
+    .data-table th {
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #9ca3af;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    .data-table th.center { text-align: center; }
+    .data-table td {
+        padding: 0.9rem 1.25rem;
+        border-bottom: 1px solid #f9fafb;
+        color: #374151;
+    }
+    .data-table tbody tr:last-child td { border-bottom: none; }
+    .data-table tbody tr:hover { background: #fafafa; }
+
+    .product-name { font-weight: 600; color: #111827; font-size: 0.85rem; }
+    .product-pres { font-size: 0.75rem; color: #9ca3af; margin-top: 2px; }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        font-family: 'DM Mono', monospace;
+    }
+    .badge-gray { background: #f3f4f6; color: #374151; }
+    .badge-red { background: #fef2f2; color: #dc2626; }
+    .badge-yellow { background: #fffbeb; color: #d97706; }
+    .badge-orange { background: #fff7ed; color: #ea580c; }
+    .badge-green { background: #f0fdf4; color: #16a34a; }
+
+    .date-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.83rem;
+        font-family: 'DM Mono', monospace;
+    }
+    .date-cell.red { color: #dc2626; }
+    .date-cell.yellow { color: #d97706; }
+
+    /* Empty state */
+    .empty-state {
+        padding: 3.5rem 1.5rem;
+        text-align: center;
+    }
+    .empty-icon {
+        width: 56px; height: 56px;
+        background: #f0fdf4;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 1rem;
+    }
+    .empty-title { font-size: 0.95rem; font-weight: 600; color: #374151; }
+    .empty-desc { font-size: 0.8rem; color: #9ca3af; margin-top: 0.3rem; }
+</style>
+
+<div class="alertas-wrap">
+
+    <!-- Header -->
+    <div class="alertas-header">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800">Sistema de Alertas</h2>
-            <p class="text-gray-500 text-sm mt-1">Monitoreo de fechas de vencimiento</p>
+            <h2 class="alertas-title">Sistema de Alertas</h2>
+            <p class="alertas-subtitle">Monitoreo de fechas de vencimiento</p>
         </div>
-        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition text-sm font-medium text-gray-700">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
-            Volver al Dashboard
-        </a>
-    </div>
-</div>
-
-<!-- Cards de Resumen -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-    
-    <!-- Card Vencidos -->
-    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-white/20 rounded-lg p-3">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-red-100 text-sm font-medium">Medicamentos Vencidos</p>
-                        <p class="text-4xl font-bold mt-1">{{ $conteo['vencidos'] }}</p>
-                    </div>
-                </div>
-                <div class="bg-white/10 rounded-lg p-3 mt-4">
-                    <p class="text-red-50 text-xs font-medium"> Requiere acción inmediata</p>
-                    <p class="text-white/90 text-xs mt-1">Estos productos deben ser dados de baja del inventario</p>
-                </div>
-            </div>
+        <div style="display:flex; align-items:center; gap:0.6rem;">
+            <a href="{{ route('alertas.pdf') }}" target="_blank" class="btn-back" style="background:#dc2626; color:#fff; border-color:#dc2626;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Exportar PDF
+            </a>
+            <a href="{{ route('dashboard') }}" class="btn-back">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Volver al Dashboard
+            </a>
         </div>
     </div>
 
-    <!-- Card Por Vencer -->
-    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-            <div class="flex-1">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-white/20 rounded-lg p-3">
-                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-yellow-100 text-sm font-medium">Por Vencer</p>
-                        <p class="text-4xl font-bold mt-1">{{ $conteo['por_vencer'] }}</p>
-                    </div>
-                </div>
-                <div class="bg-white/10 rounded-lg p-3 mt-4">
-                    <p class="text-yellow-50 text-xs font-medium">Próximos 30 días</p>
-                    <p class="text-white/90 text-xs mt-1">Planifica la rotación de estos productos</p>
-                </div>
-            </div>
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+        <div class="summary-card vencidos">
+            <p class="card-label">Medicamentos Vencidos</p>
+            <p class="card-number">{{ $conteo['vencidos'] }}</p>
+            <p class="card-desc">Requieren acción inmediata — dar de baja del sistema</p>
+        </div>
+        <div class="summary-card por-vencer">
+            <p class="card-label">Por Vencer</p>
+            <p class="card-number">{{ $conteo['por_vencer'] }}</p>
+            <p class="card-desc">Próximos 90 días — planificar rotación de stock</p>
         </div>
     </div>
 
-</div>
-
-<!-- Tabla de Vencidos -->
-<div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
-    <!-- Header de la tabla -->
-    <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 rounded-lg p-2">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z" clip-rule="evenodd"/>
+    <!-- Tabla Vencidos -->
+    <div class="section-block">
+        <div class="section-head">
+            <div class="section-head-left">
+                <div class="section-icon red">
+                    <svg width="18" height="18" fill="none" stroke="#dc2626" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="text-white font-bold text-lg">Medicamentos Vencidos</h3>
-                    <p class="text-red-100 text-xs">{{ $conteo['vencidos'] }} productos requieren atención urgente</p>
+                    <p class="section-title">Medicamentos Vencidos</p>
+                    <p class="section-count">{{ $conteo['vencidos'] }} productos requieren atención urgente</p>
                 </div>
             </div>
             @if($conteo['vencidos'] > 0)
-            <a href="{{ route('historial-bajas.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-red-600 rounded-lg hover:bg-red-50 transition text-sm font-medium">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <a href="{{ route('historial-bajas.index') }}" class="btn-action red">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 Registrar Bajas
             </a>
             @endif
         </div>
-    </div>
 
-    <!-- Contenido de la tabla -->
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Producto</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Lote</th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Cantidad</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fecha Vencimiento</th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Días Vencido</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($vencidos as $item)
-                <tr class="hover:bg-red-50 transition">
-                    <td class="px-6 py-4">
-                        <p class="font-semibold text-gray-900">{{ $item->producto->nombre }}</p>
-                        @if($item->producto->presentacion)
-                        <p class="text-xs text-gray-500 mt-1">{{ $item->producto->presentacion }}</p>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
-                            {{ $item->producto->codigo }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="text-sm font-medium text-gray-700">{{ $item->lote }}</span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-red-100 text-red-700">
-                            {{ $item->cantidad }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-red-600">{{ $item->fecha_vencimiento->format('d/m/Y') }}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z" clip-rule="evenodd"/>
-                            </svg>
-                            {{ $item->fecha_vencimiento->diffInDays(now()) }} días
-                        </span>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="px-6 py-12">
-                        <div class="text-center">
-                            <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <p class="text-lg font-semibold text-gray-500">¡Excelente!</p>
-                            <p class="text-sm text-gray-400 mt-2">No hay medicamentos vencidos en este momento</p>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Tabla de Por Vencer -->
-<div class="bg-white rounded-xl shadow-lg overflow-hidden">
-    <!-- Header de la tabla -->
-    <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-white/20 rounded-lg p-2">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                    </svg>
-                </div>
-                <div>
-                    <h3 class="text-white font-bold text-lg">Por Vencer en los Próximos 30 Días</h3>
-                    <p class="text-yellow-100 text-xs">{{ $conteo['por_vencer'] }} productos requieren seguimiento</p>
-                </div>
-            </div>
-            @if($conteo['por_vencer'] > 0)
-            <a href="{{ route('inventario.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white text-yellow-600 rounded-lg hover:bg-yellow-50 transition text-sm font-medium">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
-                </svg>
-                Ver Inventario
-            </a>
-            @endif
+        <div class="overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Código</th>
+                        <th>Lote</th>
+                        <th class="center">Cantidad</th>
+                        <th>Fecha Vencimiento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($vencidos as $item)
+                    <tr>
+                        <td>
+                            <p class="product-name">{{ $item->producto->nombre }}</p>
+                            @if($item->producto->presentacion)
+                            <p class="product-pres">{{ $item->producto->presentacion }}</p>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge badge-gray">{{ $item->producto->codigo }}</span>
+                        </td>
+                        <td>
+                            <span style="font-size:0.83rem; font-family:'DM Mono',monospace; color:#374151;">{{ $item->lote }}</span>
+                        </td>
+                        <td class="center">
+                            <span class="badge badge-red">{{ $item->cantidad }}</span>
+                        </td>
+                        <td>
+                            <div class="date-cell red">
+                                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                {{ $item->fecha_vencimiento->format('d/m/Y') }}
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <svg width="24" height="24" fill="none" stroke="#16a34a" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                                <p class="empty-title">¡Sin medicamentos vencidos!</p>
+                                <p class="empty-desc">No hay productos vencidos en este momento</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- Contenido de la tabla -->
-    <div class="overflow-x-auto">
-        <table class="w-full text-sm">
-            <thead class="bg-gray-50 border-b border-gray-200">
-                <tr>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Producto</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Código</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Lote</th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Cantidad</th>
-                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fecha Vencimiento</th>
-                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Estado</th>
-                </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-                @forelse($porVencer as $item)
-                <tr class="hover:bg-yellow-50 transition">
-                    <td class="px-6 py-4">
-                        <p class="font-semibold text-gray-900">{{ $item->producto->nombre }}</p>
-                        @if($item->producto->presentacion)
-                        <p class="text-xs text-gray-500 mt-1">{{ $item->producto->presentacion }}</p>
-                        @endif
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
-                            {{ $item->producto->codigo }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="text-sm font-medium text-gray-700">{{ $item->lote }}</span>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-yellow-100 text-yellow-700">
-                            {{ $item->cantidad }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center gap-2">
-                            <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                            <span class="text-sm font-semibold text-yellow-600">{{ $item->fecha_vencimiento->format('d/m/Y') }}</span>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-center">
-                        @php
-                            $dias = now()->startOfDay()->diffInDays($item->fecha_vencimiento->startOfDay(), false);
-                        @endphp
+    <!-- Tabla Por Vencer -->
+    <div class="section-block">
+        <div class="section-head">
+            <div class="section-head-left">
+                <div class="section-icon yellow">
+                    <svg width="18" height="18" fill="none" stroke="#d97706" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="section-title">Por Vencer en los Próximos 90 Días</p>
+                    <p class="section-count">{{ $conteo['por_vencer'] }} productos requieren seguimiento</p>
+                </div>
+            </div>
+            @if($conteo['por_vencer'] > 0)
+            <a href="{{ route('inventario.index') }}" class="btn-action yellow">
+                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                </svg>
+                Ver Productos
+            </a>
+            @endif
+        </div>
 
-                        @if ($dias < 0)
-                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z" clip-rule="evenodd"/>
+        <div class="overflow-x-auto">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Código</th>
+                        <th>Lote</th>
+                        <th class="center">Cantidad</th>
+                        <th>Fecha Vencimiento</th>
+                        <th class="center">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($porVencer as $item)
+                    <tr>
+                        <td>
+                            <p class="product-name">{{ $item->producto->nombre }}</p>
+                            @if($item->producto->presentacion)
+                            <p class="product-pres">{{ $item->producto->presentacion }}</p>
+                            @endif
+                        </td>
+                        <td>
+                            <span class="badge badge-gray">{{ $item->producto->codigo }}</span>
+                        </td>
+                        <td>
+                            <span style="font-size:0.83rem; font-family:'DM Mono',monospace; color:#374151;">{{ $item->lote }}</span>
+                        </td>
+                        <td class="center">
+                            <span class="badge badge-yellow">{{ $item->cantidad }}</span>
+                        </td>
+                        <td>
+                            <div class="date-cell yellow">
+                                <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
-                                Vencido hace {{ abs($dias) }} días
-                            </span>
-                        @elseif ($dias <= 7)
-                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z" clip-rule="evenodd"/>
-                                </svg>
-                                 {{ $dias }} días restantes
-                            </span>
-                        @elseif ($dias <= 15)
-                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                                </svg>
-                                {{ $dias }} días restantes
-                            </span>
-                        @else
-                            <span class="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
-                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                                </svg>
-                                {{ $dias }} días restantes
-                            </span>
-                        @endif
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="px-6 py-12">
-                        <div class="text-center">
-                            <svg class="w-20 h-20 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <p class="text-lg font-semibold text-gray-500">Todo bajo control</p>
-                            <p class="text-sm text-gray-400 mt-2">No hay productos próximos a vencer en los próximos 30 días</p>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                                {{ $item->fecha_vencimiento->format('d/m/Y') }}
+                            </div>
+                        </td>
+                        <td class="center">
+                            @php
+                                $dias = now()->startOfDay()->diffInDays($item->fecha_vencimiento->startOfDay(), false);
+                            @endphp
+                            @if($dias < 0)
+                                <span class="badge badge-red">Vencido</span>
+                            @elseif($dias <= 7)
+                                <span class="badge badge-red">{{ $dias }}d restantes</span>
+                            @elseif($dias <= 15)
+                                <span class="badge badge-orange">{{ $dias }}d restantes</span>
+                            @else
+                                <span class="badge badge-yellow">{{ $dias }}d restantes</span>
+                            @endif
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6">
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <svg width="24" height="24" fill="none" stroke="#16a34a" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                    </svg>
+                                </div>
+                                <p class="empty-title">Todo bajo control</p>
+                                <p class="empty-desc">No hay productos de empresa próximos a vencer en los próximos 30 días</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
+
 </div>
 
 @endsection

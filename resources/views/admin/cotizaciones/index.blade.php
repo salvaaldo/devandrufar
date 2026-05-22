@@ -20,6 +20,55 @@
         </a>
     </div>
 
+    {{-- Buscador y filtros --}}
+    <form method="GET" action="{{ route('cotizaciones.index') }}" class="flex flex-col sm:flex-row gap-3 mb-5">
+        {{-- Campo de búsqueda --}}
+        <div class="relative flex-1">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 0 5 11a6 6 0 0 0 12 0z"/>
+                </svg>
+            </span>
+            <input
+                type="text"
+                name="search"
+                value="{{ request('search') }}"
+                placeholder="Buscar por N° cotización, nombre o cliente..."
+                class="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+        </div>
+
+        {{-- Filtro estado --}}
+        <select name="estado" class="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[160px]">
+            <option value="">Todos los estados</option>
+            @foreach(['borrador','enviada','aprobada','rechazada','anulada'] as $est)
+                <option value="{{ $est }}" {{ request('estado') === $est ? 'selected' : '' }}>
+                    {{ ucfirst($est) }}
+                </option>
+            @endforeach
+        </select>
+
+        {{-- Botón buscar --}}
+        <button type="submit"
+            class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 0 5 11a6 6 0 0 0 12 0z"/>
+            </svg>
+            Buscar
+        </button>
+
+        {{-- Limpiar filtros --}}
+        @if(request('search') || request('estado'))
+        <a href="{{ route('cotizaciones.index') }}"
+            class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 hover:border-gray-300 bg-white px-4 py-2 rounded-lg transition shadow-sm">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Limpiar
+        </a>
+        @endif
+    </form>
+
     {{-- Tarjetas de resumen --}}
     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
@@ -93,6 +142,7 @@
                                         'enviada'   => ['bg-blue-50 text-blue-700 border border-blue-200',    'bg-blue-500'],
                                         'aprobada'  => ['bg-green-50 text-green-700 border border-green-200', 'bg-green-500'],
                                         'rechazada' => ['bg-red-50 text-red-600 border border-red-200',       'bg-red-500'],
+                                        'anulada'   => ['bg-gray-800 text-gray-200 border border-gray-700',   'bg-gray-300'],
                                     ];
                                     [$badgeClass, $dotClass] = $badges[$cot->estado] ?? $badges['borrador'];
                                 @endphp
@@ -130,14 +180,16 @@
                                         PDF
                                     </a>
 
-                                    {{-- Eliminar --}}
-                                    <button onclick="eliminarCotizacion({{ $cot->id }}, '{{ $cot->numero }}')"
-                                        class="inline-flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 w-7 h-7 rounded-lg transition"
-                                        title="Eliminar">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    {{-- Anular --}}
+                                    @if($cot->estado !== 'anulada')
+                                    <button onclick="anularCotizacion({{ $cot->id }}, '{{ $cot->numero }}')"
+                                        class="inline-flex items-center justify-center text-gray-400 hover:text-orange-500 hover:bg-orange-50 border border-transparent hover:border-orange-200 w-7 h-7 rounded-lg transition"
+                                        title="Anular cotización y devolver stock">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                                         </svg>
                                     </button>
+                                    @endif
 
                                 </div>
                             </td>
@@ -180,11 +232,11 @@
 
 @push('scripts')
 <script>
-    function eliminarCotizacion(id, numero) {
-        if (!confirm(`¿Eliminar la cotización ${numero}? Esta acción no se puede deshacer.`)) return;
+    function anularCotizacion(id, numero) {
+        if (!confirm(`¿Estás seguro de anular la cotización ${numero}? Se devolverá el stock a la lista de productos de empresa.`)) return;
 
-        fetch(`/cotizaciones/${id}`, {
-            method: 'DELETE',
+        fetch(`/cotizaciones/${id}/anular`, {
+            method: 'PUT',
             headers: {
                 'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
@@ -195,10 +247,10 @@
             if (data.success) {
                 location.reload();
             } else {
-                alert('Error al eliminar: ' + data.error);
+                alert('Error al anular: ' + data.error);
             }
         })
-        .catch(() => alert('Error de conexión al eliminar.'));
+        .catch(() => alert('Error de conexión al anular.'));
     }
 </script>
 @endpush

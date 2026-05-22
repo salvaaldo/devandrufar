@@ -22,6 +22,7 @@ class UserService
     {
         if (!empty($datos['password'])) {
             $datos['password'] = Hash::make($datos['password']);
+            $datos['debe_cambiar_password'] = true; // Forzar cambio si el admin la resetea
         } else {
             unset($datos['password']);
         }

@@ -3,371 +3,337 @@
 @section('title', 'Dashboard')
 
 @section('content')
-
-<!-- Header del Dashboard -->
-<div class="mb-8">
-    <h2 class="text-2xl font-bold text-gray-800">Panel de Control</h2>
-    <p class="text-gray-500 text-sm mt-1">Resumen general del sistema de inventario</p>
-</div>
-
-<!-- Grid de Estadísticas Principales -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-
-    <!-- Total Productos -->
-    <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-blue-100 text-sm font-medium">Total Productos</p>
-                <p class="text-4xl font-bold mt-2">{{ $totalProductos }}</p>
-                <p class="text-blue-100 text-xs mt-2">En inventario</p>
-            </div>
-            <div class="bg-white/20 rounded-full p-4">
-                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z"/>
-                    <path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <!-- Medicamentos Vigentes -->
-    <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-green-100 text-sm font-medium">Vigentes</p>
-                <p class="text-4xl font-bold mt-2">{{ $conteo['vigentes'] ?? 0 }}</p>
-                <p class="text-green-100 text-xs mt-2">En buen estado</p>
-            </div>
-            <div class="bg-white/20 rounded-full p-4">
-                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <!-- Por Vencer -->
-    <div class="bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-yellow-100 text-sm font-medium">Por Vencer</p>
-                <p class="text-4xl font-bold mt-2">{{ $conteo['por_vencer'] }}</p>
-                <p class="text-yellow-100 text-xs mt-2">Próximos 30 días</p>
-            </div>
-            <div class="bg-white/20 rounded-full p-4">
-                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-    <!-- Vencidos -->
-    <div class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg p-6 text-white">
-        <div class="flex items-center justify-between">
-            <div>
-                <p class="text-red-100 text-sm font-medium">Vencidos</p>
-                <p class="text-4xl font-bold mt-2">{{ $conteo['vencidos'] }}</p>
-                <p class="text-red-100 text-xs mt-2">Requieren acción</p>
-            </div>
-            <div class="bg-white/20 rounded-full p-4">
-                <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                </svg>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<!-- Acciones Rápidas -->
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+    }
+    .dark-glass {
+        background: rgba(15, 23, 42, 0.85);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(51, 65, 85, 0.5);
+        border-radius: 20px;
+    }
+    .neon-border {
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.3), inset 0 0 10px rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.5);
+    }
+    .neon-border-red {
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.3), inset 0 0 10px rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.5);
+    }
+    .neon-border-yellow {
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.3), inset 0 0 10px rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.5);
+    }
+    .animate-float {
+        animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+    .hero-banner {
+        background-image: url('{{ asset("img/dashboard_hero.png") }}');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+    .hero-banner::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.7) 50%, rgba(15, 23, 42, 0.4) 100%);
+        border-radius: 24px;
+    }
+    .content-relative { position: relative; z-index: 10; }
     
-    <a href="{{ route('productos.create') }}" 
-       class="bg-white hover:bg-gray-50 rounded-lg shadow p-4 flex items-center gap-4 transition border border-gray-200">
-        <div class="bg-blue-100 rounded-lg p-3">
-            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-        </div>
-        <div>
-            <p class="font-semibold text-gray-800">Nuevo Producto</p>
-            <p class="text-xs text-gray-500">Agregar al inventario</p>
-        </div>
-    </a>
+    /* Para que el fondo principal de la página (layout) no interfiera */
+    .dashboard-wrapper {
+        min-height: calc(100vh - 64px);
+    }
+</style>
 
-    <a href="{{ route('ocr.index') }}" 
-       class="bg-white hover:bg-gray-50 rounded-lg shadow p-4 flex items-center gap-4 transition border border-gray-200">
-        <div class="bg-purple-100 rounded-lg p-3">
-            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
-            </svg>
-        </div>
-        <div>
-            <p class="font-semibold text-gray-800">Detección OCR</p>
-            <p class="text-xs text-gray-500">Escanear medicamentos</p>
-        </div>
-    </a>
+<div class="dashboard-wrapper pb-10">
 
-    <a href="{{ route('historial-bajas.index') }}" 
-       class="bg-white hover:bg-gray-50 rounded-lg shadow p-4 flex items-center gap-4 transition border border-gray-200">
-        <div class="bg-red-100 rounded-lg p-3">
-            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-        </div>
-        <div>
-            <p class="font-semibold text-gray-800">Historial Vencidos</p>
-            <p class="text-xs text-gray-500">Ver registros de bajas</p>
-        </div>
-    </a>
-
-</div>
-
-<!-- Grid de Gráficos y Tablas -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-    <!-- Distribución de Estado (2/3 del ancho) -->
-    <div class="lg:col-span-2 bg-white rounded-xl shadow-lg p-6">
-        <div class="flex items-center justify-between mb-6">
+    <!-- Hero Banner -->
+    <div class="hero-banner rounded-[24px] p-8 md:p-10 mb-8 shadow-2xl overflow-hidden mt-2 border border-gray-800">
+        <div class="content-relative flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
-                <h3 class="text-lg font-bold text-gray-800">Distribución de Estado</h3>
-                <p class="text-sm text-gray-500">Estado actual del inventario</p>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-2">
+                    Panel de Control <span class="text-blue-400">Inteligente</span>
+                </h1>
+                <p class="text-gray-300 text-sm md:text-base max-w-xl leading-relaxed">
+                    Sistema de visión artificial y gestión de productos PEPS. Bienvenido a la farmacia del futuro.
+                </p>
             </div>
-            <a href="{{ route('inventario.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                Ver inventario →
-            </a>
+            <div class="mt-6 md:mt-0 glass-card px-5 py-3 flex items-center gap-3">
+                <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse shadow-[0_0_10px_#4ade80]"></div>
+                <span class="text-white font-medium text-sm tracking-wide">Sistema en línea</span>
+            </div>
         </div>
 
-        <!-- Barra de progreso visual -->
-        <div class="space-y-4">
+        <!-- Stats Cards flotantes sobre el banner -->
+        <div class="content-relative grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
             
-            <!-- Vigentes -->
-            <div>
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <span class="w-3 h-3 bg-green-500 rounded-full"></span>
-                        Vigentes
-                    </span>
-                    <span class="text-sm font-bold text-gray-800">{{ $conteo['vigentes'] ?? 0 }} productos</span>
+            <!-- Total -->
+            <div class="dark-glass p-6 neon-border group hover:-translate-y-2 transition-all duration-300">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Total Productos</p>
+                        <h3 class="text-4xl font-black text-white">{{ $totalProductos }}</h3>
+                    </div>
+                    <div class="p-3 bg-blue-500/20 rounded-xl group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM4 7V5a2 2 0 012-2h12a2 2 0 012 2v2"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-3">
-                    @php
-                        $total = max($totalProductos, 1);
-                        $porcentajeVigentes = ($conteo['vigentes'] ?? 0) / $total * 100;
-                    @endphp
-                    <div class="bg-green-500 h-3 rounded-full transition-all" style="width: {{ $porcentajeVigentes }}%"></div>
+                <div class="mt-4 flex items-center text-xs text-gray-400">
+                    <span class="text-blue-400 mr-2 font-bold">100%</span> Productos en stock
                 </div>
-                <p class="text-xs text-gray-500 mt-1">{{ number_format($porcentajeVigentes, 1) }}% del total</p>
             </div>
 
             <!-- Por Vencer -->
-            <div>
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <span class="w-3 h-3 bg-yellow-500 rounded-full"></span>
-                        Por Vencer
-                    </span>
-                    <span class="text-sm font-bold text-gray-800">{{ $conteo['por_vencer'] }} productos</span>
+            <div class="dark-glass p-6 neon-border-yellow group hover:-translate-y-2 transition-all duration-300">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Por Vencer</p>
+                        <h3 class="text-4xl font-black text-white">{{ $conteo['por_vencer'] }}</h3>
+                    </div>
+                    <div class="p-3 bg-yellow-500/20 rounded-xl group-hover:scale-110 transition-transform">
+                        <svg class="w-7 h-7 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
                 </div>
-                <div class="w-full bg-gray-200 rounded-full h-3">
-                    @php
-                        $porcentajePorVencer = $conteo['por_vencer'] / $total * 100;
-                    @endphp
-                    <div class="bg-yellow-500 h-3 rounded-full transition-all" style="width: {{ $porcentajePorVencer }}%"></div>
+                <div class="mt-4 flex items-center text-xs text-gray-400">
+                    <span class="text-yellow-400 mr-2 font-bold">90 días</span> Requiere rotación PEPS
                 </div>
-                <p class="text-xs text-gray-500 mt-1">{{ number_format($porcentajePorVencer, 1) }}% del total</p>
             </div>
 
             <!-- Vencidos -->
-            <div>
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-sm font-medium text-gray-700 flex items-center gap-2">
-                        <span class="w-3 h-3 bg-red-500 rounded-full"></span>
-                        Vencidos
-                    </span>
-                    <span class="text-sm font-bold text-gray-800">{{ $conteo['vencidos'] }} productos</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-3">
-                    @php
-                        $porcentajeVencidos = $conteo['vencidos'] / $total * 100;
-                    @endphp
-                    <div class="bg-red-500 h-3 rounded-full transition-all" style="width: {{ $porcentajeVencidos }}%"></div>
-                </div>
-                <p class="text-xs text-gray-500 mt-1">{{ number_format($porcentajeVencidos, 1) }}% del total</p>
-            </div>
-
-        </div>
-
-        <!-- Resumen numérico -->
-        <div class="mt-6 pt-6 border-t border-gray-200">
-            <div class="grid grid-cols-3 gap-4 text-center">
-                <div>
-                    <p class="text-2xl font-bold text-green-600">{{ number_format($porcentajeVigentes, 1) }}%</p>
-                    <p class="text-xs text-gray-500 mt-1">Óptimo</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-yellow-600">{{ number_format($porcentajePorVencer, 1) }}%</p>
-                    <p class="text-xs text-gray-500 mt-1">Atención</p>
-                </div>
-                <div>
-                    <p class="text-2xl font-bold text-red-600">{{ number_format($porcentajeVencidos, 1) }}%</p>
-                    <p class="text-xs text-gray-500 mt-1">Crítico</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Alertas Recientes (1/3 del ancho) -->
-    <div class="bg-white rounded-xl shadow-lg p-6">
-        <div class="flex items-center justify-between mb-6">
-            <div>
-                <h3 class="text-lg font-bold text-gray-800">Alertas</h3>
-                <p class="text-sm text-gray-500">Requieren atención</p>
-            </div>
-            <a href="{{ route('alertas.index') }}" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
-                Ver todas →
-            </a>
-        </div>
-
-        <div class="space-y-3">
-            @if($conteo['vencidos'] > 0)
-            <div class="bg-red-50 border-l-4 border-red-500 p-3 rounded">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
+            <div class="dark-glass p-6 neon-border-red group hover:-translate-y-2 transition-all duration-300">
+                <div class="flex items-start justify-between">
                     <div>
-                        <p class="text-sm font-bold text-red-800">{{ $conteo['vencidos'] }} Vencidos</p>
-                        <p class="text-xs text-red-600">Dar de baja urgente</p>
+                        <p class="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Vencidos</p>
+                        <h3 class="text-4xl font-black text-white">{{ $conteo['vencidos'] }}</h3>
                     </div>
-                </div>
-            </div>
-            @endif
-
-            @if($conteo['por_vencer'] > 0)
-            <div class="bg-yellow-50 border-l-4 border-yellow-500 p-3 rounded">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-bold text-yellow-800">{{ $conteo['por_vencer'] }} Por Vencer</p>
-                        <p class="text-xs text-yellow-600">Próximos 30 días</p>
-                    </div>
-                </div>
-            </div>
-            @endif
-
-            @if($conteo['vencidos'] == 0 && $conteo['por_vencer'] == 0)
-            <div class="bg-green-50 border-l-4 border-green-500 p-3 rounded">
-                <div class="flex items-center gap-2">
-                    <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-bold text-green-800">Todo en orden</p>
-                        <p class="text-xs text-green-600">Sin alertas pendientes</p>
-                    </div>
-                </div>
-            </div>
-            @endif
-        </div>
-    </div>
-
-</div>
-
-<!-- Tablas de Detalle -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-
-    <!-- Últimos Vencidos -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/20 rounded-lg p-2">
-                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92z" clip-rule="evenodd"/>
+                    <div class="p-3 bg-red-500/20 rounded-xl group-hover:scale-110 transition-transform animate-pulse">
+                        <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-white font-bold">Últimos Vencidos</h3>
                 </div>
-                <a href="{{ route('alertas.index') }}" class="text-white/90 hover:text-white text-sm font-medium">
-                    Ver todos →
-                </a>
+                <div class="mt-4 flex items-center text-xs text-gray-400">
+                    <span class="text-red-400 mr-2 font-bold">Peligro</span> Dar de baja urgente
+                </div>
             </div>
-        </div>
 
-        <div class="p-6">
-            <div class="space-y-3">
-                @forelse($vencidos as $item)
-                <div class="flex items-center justify-between p-4 bg-red-50 rounded-lg border border-red-100 hover:bg-red-100 transition">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-800">{{ $item->producto->nombre }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Lote: <span class="font-medium">{{ $item->lote }}</span></p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-xs text-gray-500">Vencido</p>
-                        <p class="text-sm font-bold text-red-600">{{ $item->fecha_vencimiento->format('d/m/Y') }}</p>
-                    </div>
-                </div>
-                @empty
-                <div class="text-center py-8">
-                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <p class="text-sm text-gray-500 font-medium">¡Excelente!</p>
-                    <p class="text-xs text-gray-400 mt-1">No hay medicamentos vencidos</p>
-                </div>
-                @endforelse
-            </div>
         </div>
     </div>
 
-    <!-- Próximos a Vencer -->
-    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="bg-white/20 rounded-lg p-2">
-                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-white font-bold">Próximos a Vencer</h3>
+    <!-- Main Grid Content -->
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-10">
+
+        <!-- Columna Izquierda: Acciones y Progreso -->
+        <div class="xl:col-span-1 space-y-8">
+            
+            <!-- Acciones Rápidas (Estilo App Móvil) -->
+            <div class="bg-white rounded-[20px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100">
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-5">Acciones Rápidas</h3>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <a href="{{ route('ocr.index') }}" class="flex flex-col items-center justify-center p-4 bg-gradient-to-b from-blue-50 to-blue-100/50 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all group border border-blue-100/50">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-blue-600 group-hover:scale-110 transition-transform mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-bold text-gray-700">Detección OCR</span>
+                    </a>
+
+                    <a href="{{ route('productos.create') }}" class="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all group border border-gray-100">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-600 group-hover:scale-110 transition-transform mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-bold text-gray-700">Nuevo Producto</span>
+                    </a>
+
+                    <a href="{{ route('historial-bajas.index') }}" class="flex flex-col items-center justify-center p-4 bg-red-50/50 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all group border border-red-100/50">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-red-500 group-hover:scale-110 transition-transform mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-bold text-gray-700">Ver Bajas</span>
+                    </a>
+
+                    <a href="{{ route('inventario.index') }}" class="flex flex-col items-center justify-center p-4 bg-emerald-50/50 rounded-2xl hover:shadow-lg hover:-translate-y-1 transition-all group border border-emerald-100/50">
+                        <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm text-emerald-600 group-hover:scale-110 transition-transform mb-3">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </div>
+                        <span class="text-xs font-bold text-gray-700">Lista de productos de empresa</span>
+                    </a>
                 </div>
-                <a href="{{ route('alertas.index') }}" class="text-white/90 hover:text-white text-sm font-medium">
-                    Ver todos →
-                </a>
+            </div>
+
+            <!-- Distribución de Inventario -->
+            <div class="bg-white rounded-[20px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 relative overflow-hidden">
+                <!-- Decoración -->
+                <div class="absolute -right-10 -top-10 w-32 h-32 bg-blue-50 rounded-full blur-3xl opacity-50"></div>
+                
+                <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest mb-6 relative z-10">Estado de Productos</h3>
+                
+                @php
+                    $total = max($totalProductos, 1);
+                    $pPV = $conteo['por_vencer'] / $total * 100;
+                    $pVe = $conteo['vencidos'] / $total * 100;
+                @endphp
+
+                <div class="space-y-6 relative z-10">
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="font-semibold text-gray-700">Vigentes</span>
+                            <span class="font-bold text-emerald-500">{{ number_format(100 - ($pPV + $pVe), 1) }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-emerald-400 h-full rounded-full transition-all duration-1000 ease-out" style="width: {{ 100 - ($pPV + $pVe) }}%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="font-semibold text-gray-700">Por Vencer</span>
+                            <span class="font-bold text-yellow-500">{{ number_format($pPV, 1) }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-yellow-400 h-full rounded-full shadow-[0_0_10px_#facc15] transition-all duration-1000 ease-out" style="width: {{ $pPV }}%"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="font-semibold text-gray-700">Vencidos</span>
+                            <span class="font-bold text-red-500">{{ number_format($pVe, 1) }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-red-500 h-full rounded-full shadow-[0_0_10px_#ef4444] transition-all duration-1000 ease-out" style="width: {{ $pVe }}%"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="p-6">
-            <div class="space-y-3">
-                @forelse($porVencer as $item)
-                <div class="flex items-center justify-between p-4 bg-yellow-50 rounded-lg border border-yellow-100 hover:bg-yellow-100 transition">
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-gray-800">{{ $item->producto->nombre }}</p>
-                        <p class="text-xs text-gray-500 mt-1">Lote: <span class="font-medium">{{ $item->lote }}</span></p>
+        <!-- Columna Derecha: Tablas de Atención -->
+        <div class="xl:col-span-2 space-y-8">
+            
+            <!-- Últimos Vencidos -->
+            <div class="bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-red-100 overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-5 border-b border-gray-50 bg-gradient-to-r from-red-50/50 to-white">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest">Medicamentos Vencidos</h3>
+                            <p class="text-xs text-red-500 font-medium">Acción requerida inmediata</p>
+                        </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-xs text-gray-500">Vence</p>
-                        <p class="text-sm font-bold text-yellow-600">{{ $item->fecha_vencimiento->format('d/m/Y') }}</p>
+                    <a href="{{ route('reportes.vencidos.pdf') }}" target="_blank" class="flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        Generar PDF
+                    </a>
+                </div>
+                
+                <div class="p-2">
+                    @forelse($vencidos as $item)
+                    <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-50 last:border-0">
+                        <div class="flex items-center gap-4">
+                            <div class="w-1.5 h-10 bg-red-500 rounded-full"></div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">{{ $item->producto->nombre ?? 'Sin nombre' }}</p>
+                                <div class="flex gap-3 text-xs text-gray-500 mt-1">
+                                    <span class="bg-gray-100 px-2 py-0.5 rounded-md">Lote: {{ $item->lote }}</span>
+                                    <span>Stock: <strong class="text-gray-700">{{ $item->cantidad }}</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right bg-red-50 px-4 py-2 rounded-xl border border-red-100">
+                            <p class="text-xs text-red-400 font-medium uppercase tracking-wide mb-0.5">Venció el</p>
+                            <p class="text-sm font-black text-red-600">{{ \Carbon\Carbon::parse($item->fecha_vencimiento)->format('d/m/Y') }}</p>
+                        </div>
                     </div>
+                    @empty
+                    <div class="py-12 flex flex-col items-center justify-center">
+                        <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <h4 class="text-gray-900 font-bold">¡Stock al día!</h4>
+                        <p class="text-sm text-gray-500 mt-1">No tienes medicamentos vencidos actualmente.</p>
+                    </div>
+                    @endforelse
                 </div>
-                @empty
-                <div class="text-center py-8">
-                    <svg class="w-16 h-16 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <p class="text-sm text-gray-500 font-medium">Todo bajo control</p>
-                    <p class="text-xs text-gray-400 mt-1">No hay productos por vencer pronto</p>
-                </div>
-                @endforelse
             </div>
+
+            <!-- Próximos a Vencer -->
+            <div class="bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-yellow-100 overflow-hidden">
+                <div class="flex items-center justify-between px-6 py-5 border-b border-gray-50 bg-gradient-to-r from-yellow-50/50 to-white">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-gray-900 uppercase tracking-widest">Próximos a Vencer</h3>
+                            <p class="text-xs text-yellow-600 font-medium">Vencen en los próximos 90 días</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-2">
+                    @forelse($porVencer as $item)
+                    <div class="flex items-center justify-between p-4 hover:bg-gray-50 rounded-xl transition-colors border-b border-gray-50 last:border-0">
+                        <div class="flex items-center gap-4">
+                            <div class="w-1.5 h-10 bg-yellow-400 rounded-full"></div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">{{ $item->producto->nombre ?? 'Sin nombre' }}</p>
+                                <div class="flex gap-3 text-xs text-gray-500 mt-1">
+                                    <span class="bg-gray-100 px-2 py-0.5 rounded-md">Lote: {{ $item->lote }}</span>
+                                    <span>Stock: <strong class="text-gray-700">{{ $item->cantidad }}</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right bg-yellow-50 px-4 py-2 rounded-xl border border-yellow-100">
+                            <p class="text-xs text-yellow-600 font-medium uppercase tracking-wide mb-0.5">Vence el</p>
+                            <p class="text-sm font-black text-yellow-600">{{ \Carbon\Carbon::parse($item->fecha_vencimiento)->format('d/m/Y') }}</p>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="py-12 flex flex-col items-center justify-center">
+                        <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <h4 class="text-gray-900 font-bold">Sin alertas</h4>
+                        <p class="text-sm text-gray-500 mt-1">No hay medicamentos próximos a vencer.</p>
+                    </div>
+                    @endforelse
+                </div>
+            </div>
+
         </div>
     </div>
-
 </div>
 
 @endsection

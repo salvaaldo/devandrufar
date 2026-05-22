@@ -38,14 +38,14 @@ class Inventario extends Model
     // Calcular estado automáticamente
     public static function calcularEstado(string $fechaVencimiento): string
     {
-        $hoy = Carbon::today()->startOfDay();
-        $vencimiento = Carbon::parse($fechaVencimiento)->startOfDay();
+        $hoy = Carbon::today();
+        $vencimiento = Carbon::parse($fechaVencimiento);
 
-        $dias = $hoy->diffInDays($vencimiento, false);
+        $dias = $hoy->diffInDays($vencimiento, false); // 🔥 CLAVE
 
         if ($dias < 0) {
             return 'vencido';
-        } elseif ($dias <= 120) {
+        } elseif ($dias <= 90) {
             return 'por_vencer';
         } else {
             return 'vigente';

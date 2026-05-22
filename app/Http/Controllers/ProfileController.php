@@ -9,8 +9,40 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
+
 class ProfileController extends Controller
 {
+    /**
+     * Show the form to force password change.
+     */
+    public function showPasswordChange(): View
+    {
+        return view('auth.password-change');
+    }
+
+    /**
+     * Update the forced password change.
+     */
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'password' => [
+                'required', 
+                'confirmed', 
+                Password::min(8)->letters()->mixedCase()->numbers()->symbols()
+            ],
+        ]);
+
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
+            'debe_cambiar_password' => false,
+        ]);
+
+        return redirect()->route('dashboard')->with('success', 'Contraseña actualizada correctamente. Bienvenido al sistema.');
+    }
+
     /**
      * Display the user's profile form.
      */

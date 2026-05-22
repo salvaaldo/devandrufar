@@ -31,6 +31,10 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Cambiar contraseña obligatoria
+    Route::get('password-change', [ProfileController::class, 'showPasswordChange'])->name('password.change');
+    Route::post('password-change', [ProfileController::class, 'updatePassword'])->name('password.update');
+
     // =========================
     // DASHBOARD
     // =========================
@@ -60,6 +64,8 @@ Route::middleware(['auth'])->group(function () {
     // =========================
     // PRODUCTOS
     // =========================
+    Route::get('productos/pdf', [ProductoController::class, 'pdf'])
+        ->name('productos.pdf');
     Route::resource('productos', ProductoController::class);
 
     Route::get('productos/buscar-medicamento', [ProductoController::class, 'buscarMedicamento'])
@@ -68,18 +74,36 @@ Route::middleware(['auth'])->group(function () {
     // =========================
     // INVENTARIO
     // =========================
+    Route::get('inventario/pdf', [InventarioController::class, 'pdf'])
+        ->name('inventario.pdf');
     Route::resource('inventario', InventarioController::class);
 
     // =========================
     // ALERTAS
     // =========================
+    Route::get('alertas/pdf', [AlertaController::class, 'pdf'])
+        ->name('alertas.pdf');
     Route::get('alertas', [AlertaController::class, 'index'])->name('alertas.index');
 
     // =========================
     // HISTORIAL BAJAS
     // =========================
+    Route::get('historial-bajas/pdf', [App\Http\Controllers\Admin\HistorialBajaController::class, 'pdf'])
+        ->name('historial-bajas.pdf');
     Route::get('historial-bajas', [App\Http\Controllers\Admin\HistorialBajaController::class, 'index'])
         ->name('historial-bajas.index');
+
+    // =========================
+    // REPORTES PDF
+    // =========================
+    Route::get('reportes/vencidos/pdf', [App\Http\Controllers\Admin\ReporteController::class, 'vencidosPdf'])
+        ->name('reportes.vencidos.pdf');
+
+    Route::get('reportes/ventas', [App\Http\Controllers\Admin\ReporteController::class, 'ventas'])
+        ->name('reportes.ventas');
+
+    Route::get('reportes/ventas/pdf', [App\Http\Controllers\Admin\ReporteController::class, 'ventasPdf'])
+        ->name('reportes.ventas.pdf');
 
 
 
@@ -114,6 +138,12 @@ Route::middleware(['auth'])->group(function () {
         'cotizaciones/{id}/pdf',
         [\App\Http\Controllers\Admin\CotizacionController::class, 'pdf']
     )->name('cotizaciones.pdf');
+
+    // anular cotizacion
+    Route::put(
+        'cotizaciones/{id}/anular',
+        [\App\Http\Controllers\Admin\CotizacionController::class, 'anular']
+    )->name('cotizaciones.anular');
 
     // Resource DESPUÉS
     Route::resource('cotizaciones', \App\Http\Controllers\Admin\CotizacionController::class);

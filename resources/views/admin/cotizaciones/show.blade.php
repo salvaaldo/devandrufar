@@ -24,6 +24,7 @@
                 'enviada'   => 'bg-blue-100 text-blue-700',
                 'aprobada'  => 'bg-green-100 text-green-700',
                 'rechazada' => 'bg-red-100 text-red-700',
+                'anulada'   => 'bg-gray-800 text-gray-200',
             ];
             $color = $colores[$cotizacion->estado] ?? 'bg-gray-100 text-gray-600';
         @endphp

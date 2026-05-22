@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Controller;
 use App\Models\Inventario;
+use App\Models\HistorialBaja;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class OcrController extends Controller
@@ -61,7 +63,7 @@ class OcrController extends Controller
 
         if ($diasRestantes < 0) {
             $estado = 'VENCIDO';
-        } elseif ($diasRestantes <= 30) {
+        } elseif ($diasRestantes <= 90) {
             $estado = 'PROXIMO';
         } else {
             $estado = 'VIGENTE';
@@ -124,18 +126,18 @@ class OcrController extends Controller
      */
     public function darDeBaja(Request $request)
     {
-        $inventario = Inventario::with('producto')->find($request->lote_id);
+        return DB::transaction(function () use ($request) {
+            $inventario = Inventario::with('producto')->find($request->lote_id);
 
-        if (!$inventario) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => 'Lote no encontrado'
-            ]);
-        }
+            if (!$inventario) {
+                return response()->json([
+                    'success' => false,
+                    'mensaje' => 'Lote no encontrado'
+                ]);
+            }
 
-        try {
             // 1. Copiar a historial_bajas
-            \App\Models\HistorialBaja::create([
+            HistorialBaja::create([
                 'producto_id'      => $inventario->producto_id,
                 'user_id'          => auth()->id(),
                 'lote'             => $inventario->lote,
@@ -143,36 +145,50 @@ class OcrController extends Controller
                 'fecha_vencimiento' => $inventario->fecha_vencimiento,
                 'fecha_ingreso'    => $inventario->fecha_ingreso,
                 'motivo'           => 'vencido',
-                'observacion'      => 'Baja automática por detección OCR',
+                'observacion'      => $request->observacion ?? 'Baja automática por detección OCR',
             ]);
 
             // 2. Eliminar del inventario activo
             $inventario->delete();
 
+            // 3. Limpiar caché de alertas
+            \Illuminate\Support\Facades\Cache::forget('vencidos_count_global');
+            \Illuminate\Support\Facades\Cache::forget('proximos_count_global');
+
             return response()->json(['success' => true]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'mensaje' => $e->getMessage()
-            ]);
-        }
+        });
     }
+
     /**
      * 🌐 Proxy hacia Python OCR
      */
     public function proxyDetectar(Request $request)
     {
         try {
-            $response = Http::timeout(30)
-                ->post('http://127.0.0.1:5000/detectar', [
-                    'imagen' => $request->input('imagen')
-                ]);
+            // Clave secreta sincronizada con el servicio Python
+            $apiKey = "Andrufar2026_Secure_OCR_Token_#!";
+
+            $response = Http::withHeaders([
+                'X-API-Key' => $apiKey,
+                'Accept'    => 'application/json',
+            ])->timeout(45) // Aumentamos timeout para imágenes pesadas
+              ->post('http://127.0.0.1:5000/detectar', [
+                  'imagen' => $request->input('imagen')
+              ]);
+
+            if ($response->failed()) {
+                return response()->json([
+                    'success' => false,
+                    'mensaje' => 'Error en el motor de IA',
+                    'status'  => $response->status()
+                ], $response->status());
+            }
 
             return response()->json($response->json());
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'error'   => 'Servicio OCR no disponible'
+                'error'   => 'El servicio OCR (Python) no está respondiendo. Verifique que el servidor de IA esté activo.'
             ], 503);
         }
     }

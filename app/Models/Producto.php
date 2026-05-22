@@ -33,4 +33,10 @@ class Producto extends Model
     {
         return $this->belongsTo(Medicamento::class);
     }
+
+    // Relación con inventarios (lotes)
+    public function inventarios()
+    {
+        return $this->hasMany(Inventario::class);
+    }
 }

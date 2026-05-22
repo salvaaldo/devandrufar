@@ -33,10 +33,20 @@ class AlertaService
 
     public function actualizarEstados(): void
     {
-        Inventario::all()->each(function ($item) {
-            $item->update([
-                'estado' => Inventario::calcularEstado($item->fecha_vencimiento)
-            ]);
-        });
+        $inventarios = Inventario::all();
+        $cambios = false;
+
+        foreach ($inventarios as $item) {
+            $nuevoEstado = Inventario::calcularEstado($item->fecha_vencimiento->format('Y-m-d'));
+            if ($item->estado !== $nuevoEstado) {
+                $item->update(['estado' => $nuevoEstado]);
+                $cambios = true;
+            }
+        }
+
+        if ($cambios) {
+            \Illuminate\Support\Facades\Cache::forget('vencidos_count_global');
+            \Illuminate\Support\Facades\Cache::forget('proximos_count_global');
+        }
     }
 }

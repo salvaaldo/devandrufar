@@ -34,7 +34,7 @@ class Cotizacion extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     public function detalles()
@@ -42,11 +42,12 @@ class Cotizacion extends Model
         return $this->hasMany(CotizacionDetalle::class);
     }
 
-    // Generar número automático COT-000001
+    // Generar número automático 000001
     public static function generarNumero(): string
     {
         $ultimo = self::orderBy('id', 'desc')->first();
-        $numero = $ultimo ? (intval(substr($ultimo->numero, 4)) + 1) : 1;
-        return 'COT-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
+        // Ya no hay prefijo "COT-", así que convertimos a entero directamente
+        $numero = $ultimo ? (intval($ultimo->numero) + 1) : 1;
+        return str_pad($numero, 7, '0', STR_PAD_LEFT);
     }
 }

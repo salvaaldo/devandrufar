@@ -264,42 +264,6 @@
 
                         </div>
 
-                        <!-- Indicador de Fortaleza de Contraseña -->
-                        <div class="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-                            <p class="text-xs font-semibold text-gray-700 mb-3">Requisitos de seguridad:</p>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                                <div id="req-longitud" class="flex items-center gap-2 text-xs text-gray-500">
-                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>Mínimo 8 caracteres</span>
-                                </div>
-                                <div id="req-mayuscula" class="flex items-center gap-2 text-xs text-gray-500">
-                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>Al menos una mayúscula</span>
-                                </div>
-                                <div id="req-minuscula" class="flex items-center gap-2 text-xs text-gray-500">
-                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>Al menos una minúscula</span>
-                                </div>
-                                <div id="req-numero" class="flex items-center gap-2 text-xs text-gray-500">
-                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>Al menos un número</span>
-                                </div>
-                                <div id="req-especial" class="flex items-center gap-2 text-xs text-gray-500 md:col-span-2">
-                                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                    </svg>
-                                    <span>Al menos un carácter especial (@$!%*?&)</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <hr class="border-gray-200">
@@ -386,12 +350,6 @@
                     </ul>
                 </div>
 
-                <div class="p-3 bg-yellow-50 rounded-lg border border-yellow-100">
-                    <h4 class="font-semibold text-sm text-yellow-900 mb-2">Seguridad de Contraseña</h4>
-                    <p class="text-xs text-yellow-800">
-                        Una contraseña segura protege la cuenta del usuario. Asegúrese de que cumpla con todos los requisitos de seguridad.
-                    </p>
-                </div>
 
                 <div class="p-3 bg-green-50 rounded-lg border border-green-100">
                     <h4 class="font-semibold text-sm text-green-900 mb-2">💡 Consejo</h4>
@@ -425,34 +383,6 @@
         }
     }
 
-    // Validación en tiempo real de contraseña
-    document.getElementById('password').addEventListener('input', function() {
-        const val = this.value;
-        const requisitos = {
-            'req-longitud':  val.length >= 8,
-            'req-mayuscula': /[A-Z]/.test(val),
-            'req-minuscula': /[a-z]/.test(val),
-            'req-numero':    /\d/.test(val),
-            'req-especial':  /[@$!%*?&]/.test(val),
-        };
-
-        for (const [id, cumple] of Object.entries(requisitos)) {
-            const el = document.getElementById(id);
-            const svg = el.querySelector('svg');
-            const span = el.querySelector('span');
-            
-            if (cumple) {
-                el.classList.remove('text-gray-500');
-                el.classList.add('text-green-600');
-                svg.classList.remove('text-gray-400');
-                svg.classList.add('text-green-500');
-            } else {
-                el.classList.remove('text-green-600');
-                el.classList.add('text-gray-500');
-                svg.classList.remove('text-green-500');
-                svg.classList.add('text-gray-400');
-            }
-        }
-    });
+    // Validación en tiempo real de contraseña removida ya que no se muestran los requisitos en esta vista.
 </script>
 @endpush

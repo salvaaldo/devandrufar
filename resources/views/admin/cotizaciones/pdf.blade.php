@@ -105,7 +105,7 @@
         }
 
         tbody tr:nth-child(even) {
-            background-color: #000000;
+            background-color: #f9f9f9;
         }
 
         tbody td {
@@ -261,7 +261,7 @@
         {{-- Firma --}}
         <div style="text-align: center; margin-top: 30px;">
             <img src="{{ public_path('images/firma.png') }}"
-                style="width: 150px; height: auto; display: block; margin: 0 auto;">
+                style="width: 150px; height: auto; display: block; margin: 0 auto; mix-blend-mode: multiply;">
             <div style="border-top: 1px solid #333; width: 200px; margin: 5px auto;"></div>
             <div><strong>ANDRUFAR S.R.L.</strong></div>
         </div>

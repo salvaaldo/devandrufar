@@ -19,6 +19,7 @@ class User extends Authenticatable
         'password',
         'rol',
         'activo',
+        'debe_cambiar_password',
     ];
 
     protected $hidden = [
@@ -31,6 +32,7 @@ class User extends Authenticatable
         return [
             'password' => 'hashed',
             'activo'   => 'boolean',
+            'debe_cambiar_password' => 'boolean',
         ];
     }
 
@@ -44,5 +46,13 @@ class User extends Authenticatable
     public function esOperador(): bool
     {
         return $this->rol === 'operador';
+    }
+
+    /**
+     * Relación con las cotizaciones realizadas por este usuario.
+     */
+    public function cotizaciones()
+    {
+        return $this->hasMany(Cotizacion::class);
     }
 }

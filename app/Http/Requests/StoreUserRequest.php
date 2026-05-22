@@ -18,7 +18,7 @@ class StoreUserRequest extends FormRequest
             'ci'       => ['required', 'string', 'max:20', 'unique:users,ci'],
             'telefono' => ['nullable', 'string', 'max:20'],
             'email'    => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'string', 'min:8', 'confirmed', 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/'],
+            'password' => ['required', 'string', 'min:6', 'confirmed'],
             'rol'      => ['required', 'in:admin,operador'],
         ];
     }
@@ -32,8 +32,7 @@ class StoreUserRequest extends FormRequest
             'email.required'     => 'El correo es obligatorio.',
             'email.unique'       => 'Ya existe un usuario con ese correo.',
             'password.required'  => 'La contraseña es obligatoria.',
-            'password.regex' => 'La contraseña debe tener al menos una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&).',
-            'password.min'   => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.min'   => 'La contraseña temporal debe tener al menos 6 caracteres.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
             'rol.required'       => 'El rol es obligatorio.',
             'rol.in'             => 'El rol debe ser admin u operador.',

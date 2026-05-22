@@ -1,0 +1,344 @@
+@extends('layouts.app')
+
+@section('title', 'Dashboard')
+
+@section('content')
+
+<!-- Header -->
+<div class="flex items-center justify-between mb-6">
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900">Panel de Control</h2>
+        <p class="text-sm text-gray-500 mt-0.5">Resumen general — Importadora Andrufar</p>
+    </div>
+    <span class="text-xs font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5">
+        {{ now()->format('d/m/Y') }}
+    </span>
+</div>
+
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+    <!-- Total Productos -->
+    <div class="bg-gradient-to-br from-blue-600 to-blue-500 rounded-2xl p-5 shadow-md flex items-center gap-4">
+        <div class="bg-white/20 rounded-xl p-3 flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7H4a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2zM4 7V5a2 2 0 012-2h12a2 2 0 012 2v2"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-3xl font-extrabold text-white leading-none">{{ $totalProductos }}</p>
+            <p class="text-blue-100 text-sm font-medium mt-1">Total Productos</p>
+            <p class="text-blue-200 text-xs mt-0.5">Registros en inventario</p>
+        </div>
+    </div>
+
+    <!-- Por Vencer -->
+    <div class="bg-gradient-to-br from-amber-500 to-yellow-400 rounded-2xl p-5 shadow-md flex items-center gap-4">
+        <div class="bg-white/20 rounded-xl p-3 flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-3xl font-extrabold text-white leading-none">{{ $conteo['por_vencer'] }}</p>
+            <p class="text-yellow-100 text-sm font-medium mt-1">Por Vencer</p>
+            <p class="text-yellow-200 text-xs mt-0.5">Próximos 90 días</p>
+        </div>
+    </div>
+
+    <!-- Vencidos -->
+    <div class="bg-gradient-to-br from-rose-600 to-red-500 rounded-2xl p-5 shadow-md flex items-center gap-4">
+        <div class="bg-white/20 rounded-xl p-3 flex-shrink-0">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-3xl font-extrabold text-white leading-none">{{ $conteo['vencidos'] }}</p>
+            <p class="text-red-100 text-sm font-medium mt-1">Vencidos</p>
+            <p class="text-red-200 text-xs mt-0.5">Requieren acción inmediata</p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+
+    <a href="{{ route('productos.create') }}"
+       class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-150">
+        <div class="bg-blue-50 rounded-lg p-2.5 flex-shrink-0">
+            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-sm font-semibold text-gray-800">Nuevo Producto</p>
+            <p class="text-xs text-gray-400 mt-0.5">Agregar al inventario</p>
+        </div>
+    </a>
+
+    <a href="{{ route('ocr.index') }}"
+       class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-150">
+        <div class="bg-violet-50 rounded-lg p-2.5 flex-shrink-0">
+            <svg class="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-sm font-semibold text-gray-800">Detección OCR</p>
+            <p class="text-xs text-gray-400 mt-0.5">Escanear medicamentos</p>
+        </div>
+    </a>
+
+    <a href="{{ route('historial-bajas.index') }}"
+       class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-4 hover:bg-gray-50 hover:border-gray-300 hover:shadow-sm transition-all duration-150">
+        <div class="bg-red-50 rounded-lg p-2.5 flex-shrink-0">
+            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+        </div>
+        <div>
+            <p class="text-sm font-semibold text-gray-800">Historial Vencidos</p>
+            <p class="text-xs text-gray-400 mt-0.5">Ver registros de bajas</p>
+        </div>
+    </a>
+
+</div>
+
+<!-- Distribución + Alertas -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+
+    <!-- Distribución (2/3) -->
+    <div class="lg:col-span-2 bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div>
+                <h3 class="text-sm font-bold text-gray-800">Distribución del Inventario</h3>
+                <p class="text-xs text-gray-400 mt-0.5">Estado actual de todos los productos</p>
+            </div>
+            <a href="{{ route('inventario.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                Ver inventario
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="p-5 space-y-4">
+            @php
+                $total = max($totalProductos, 1);
+                $pPV = $conteo['por_vencer'] / $total * 100;
+                $pVe = $conteo['vencidos'] / $total * 100;
+            @endphp
+
+            <!-- Por Vencer -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <span class="w-2.5 h-2.5 bg-amber-400 rounded-full"></span>
+                        Por Vencer
+                    </span>
+                    <span class="text-sm font-bold text-gray-800">{{ $conteo['por_vencer'] }}</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-2">
+                    <div class="bg-amber-400 h-2 rounded-full transition-all duration-700" style="width: {{ $pPV }}%"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">{{ number_format($pPV, 1) }}% del total</p>
+            </div>
+
+            <!-- Vencidos -->
+            <div>
+                <div class="flex items-center justify-between mb-1.5">
+                    <span class="flex items-center gap-2 text-sm font-medium text-gray-700">
+                        <span class="w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                        Vencidos
+                    </span>
+                    <span class="text-sm font-bold text-gray-800">{{ $conteo['vencidos'] }}</span>
+                </div>
+                <div class="w-full bg-gray-100 rounded-full h-2">
+                    <div class="bg-red-500 h-2 rounded-full transition-all duration-700" style="width: {{ $pVe }}%"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">{{ number_format($pVe, 1) }}% del total</p>
+            </div>
+        </div>
+
+        <!-- Footer resumen -->
+        <div class="grid grid-cols-2 divide-x divide-gray-100 border-t border-gray-100 bg-gray-50">
+            <div class="text-center py-3">
+                <p class="text-xl font-extrabold text-amber-500">{{ number_format($pPV, 1) }}%</p>
+                <p class="text-xs text-gray-400 mt-0.5 uppercase tracking-wide">Atención</p>
+            </div>
+            <div class="text-center py-3">
+                <p class="text-xl font-extrabold text-red-500">{{ number_format($pVe, 1) }}%</p>
+                <p class="text-xs text-gray-400 mt-0.5 uppercase tracking-wide">Crítico</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alertas (1/3) -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div>
+                <h3 class="text-sm font-bold text-gray-800">Alertas</h3>
+                <p class="text-xs text-gray-400 mt-0.5">Requieren atención</p>
+            </div>
+            <a href="{{ route('alertas.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                Ver todas
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="p-4 space-y-3">
+            @if($conteo['vencidos'] > 0)
+            <div class="flex items-center gap-3 bg-red-50 border border-red-100 rounded-xl p-3">
+                <div class="bg-red-100 rounded-lg p-2 flex-shrink-0">
+                    <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-red-800">{{ $conteo['vencidos'] }} Vencidos</p>
+                    <p class="text-xs text-red-500 mt-0.5">Dar de baja urgente</p>
+                </div>
+            </div>
+            @endif
+
+            @if($conteo['por_vencer'] > 0)
+            <div class="flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-xl p-3">
+                <div class="bg-amber-100 rounded-lg p-2 flex-shrink-0">
+                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-amber-800">{{ $conteo['por_vencer'] }} Por Vencer</p>
+                    <p class="text-xs text-amber-500 mt-0.5">Próximos 90 días</p>
+                </div>
+            </div>
+            @endif
+
+            @if($conteo['vencidos'] == 0 && $conteo['por_vencer'] == 0)
+            <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+                <div class="bg-emerald-100 rounded-lg p-2 flex-shrink-0">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-emerald-800">Todo en orden</p>
+                    <p class="text-xs text-emerald-500 mt-0.5">Sin alertas pendientes</p>
+                </div>
+            </div>
+            @endif
+        </div>
+    </div>
+
+</div>
+
+<!-- Tablas Vencidos + Por Vencer -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+    <!-- Últimos Vencidos -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2">
+                <div class="bg-red-100 rounded-lg p-1.5">
+                    <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800">Últimos Vencidos</h3>
+                    <p class="text-xs text-gray-400">Productos fuera de fecha</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('reportes.vencidos.pdf') }}" target="_blank"
+                   class="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    PDF
+                </a>
+                <a href="{{ route('alertas.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">
+                    Ver todos →
+                </a>
+            </div>
+        </div>
+
+        <div class="p-4 space-y-2">
+            @forelse($vencidos as $item)
+            <div class="flex items-center justify-between bg-red-50 hover:bg-red-100 border border-red-100 rounded-xl px-4 py-3 transition-colors">
+                <div>
+                    <p class="text-sm font-semibold text-gray-800">{{ $item->producto->nombre }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">Lote: <span class="font-medium text-gray-600">{{ $item->lote }}</span></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gray-400">Venció</p>
+                    <p class="text-sm font-bold text-red-600 mt-0.5">{{ $item->fecha_vencimiento->format('d/m/Y') }}</p>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-10">
+                <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="text-sm font-semibold text-gray-500">¡Sin vencidos!</p>
+                <p class="text-xs text-gray-400 mt-1">No hay medicamentos vencidos</p>
+            </div>
+            @endforelse
+        </div>
+    </div>
+
+    <!-- Próximos a Vencer -->
+    <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div class="flex items-center gap-2">
+                <div class="bg-amber-100 rounded-lg p-1.5">
+                    <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-sm font-bold text-gray-800">Próximos a Vencer</h3>
+                    <p class="text-xs text-gray-400">Próximos 90 días</p>
+                </div>
+            </div>
+            <a href="{{ route('alertas.index') }}" class="text-xs font-semibold text-blue-600 hover:text-blue-700">
+                Ver todos →
+            </a>
+        </div>
+
+        <div class="p-4 space-y-2">
+            @forelse($porVencer as $item)
+            <div class="flex items-center justify-between bg-amber-50 hover:bg-amber-100 border border-amber-100 rounded-xl px-4 py-3 transition-colors">
+                <div>
+                    <p class="text-sm font-semibold text-gray-800">{{ $item->producto->nombre }}</p>
+                    <p class="text-xs text-gray-400 mt-0.5">Lote: <span class="font-medium text-gray-600">{{ $item->lote }}</span></p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gray-400">Vence</p>
+                    <p class="text-sm font-bold text-amber-600 mt-0.5">{{ $item->fecha_vencimiento->format('d/m/Y') }}</p>
+                </div>
+            </div>
+            @empty
+            <div class="text-center py-10">
+                <div class="w-12 h-12 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="text-sm font-semibold text-gray-500">Todo bajo control</p>
+                <p class="text-xs text-gray-400 mt-1">No hay productos por vencer pronto</p>
+            </div>
+            @endforelse
+        </div>
+    </div>
+
+</div>
+
+@endsection

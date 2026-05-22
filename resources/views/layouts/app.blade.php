@@ -59,6 +59,35 @@
                     </li>
                 @endif
 
+                <!-- Visión Artificial (OCR) -->
+                <li>
+                    <a href="{{ route('ocr.index') }}"
+                        class="flex items-center p-2 rounded-lg text-white bg-blue-900/30 border border-blue-500/20 hover:bg-blue-800/40 group {{ request()->routeIs('ocr.index') ? 'bg-blue-800 shadow-lg' : '' }} transition-all duration-200">
+                        <svg class="w-5 h-5 text-blue-400 group-hover:text-white" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span class="ms-3 font-bold">Detección OCR</span>
+                    </a>
+                </li>
+
+                <!-- Historial OCR -->
+                <li>
+                    <a href="{{ route('ocr.historial') }}"
+                        class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('ocr.historial') ? 'bg-gray-700' : '' }}">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor"
+                            viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="ms-3">Historial OCR</span>
+                    </a>
+                </li>
+
             </ul>
 
             <!-- Usuario autenticado -->
@@ -85,42 +114,45 @@
                     </button>
                 </form>
             </div>
-            <!-- Clientes -->
-            <li>
-                <a href="{{ route('clientes.index') }}"
-                    class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('clientes.*') ? 'bg-gray-700' : '' }}">
-                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z" />
-                    </svg>
-                    <span class="ms-3">Clientes</span>
-                </a>
-            </li>
-            <!-- Medicamentos -->
-            <li>
-                <a href="{{ route('medicamentos.index') }}"
-                    class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('medicamentos.*') ? 'bg-gray-700' : '' }}">
-                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3zm1 2v1h1V5h-1zM11 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3zm2 2v-1h1v1h-1z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="ms-3">Medicamentos</span>
-                </a>
-            </li>
-            <!-- Productos -->
-            <li>
-                <a href="{{ route('productos.index') }}"
-                    class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('productos.*') ? 'bg-gray-700' : '' }}">
-                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
-                        <path fill-rule="evenodd"
-                            d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="ms-3">Productos</span>
-                </a>
-            </li>
+                <!-- Gestión Administrativa (Solo Admin) -->
+                @if (auth()->user()->esAdmin())
+                    <!-- Clientes -->
+                    <li>
+                        <a href="{{ route('clientes.index') }}"
+                            class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('clientes.*') ? 'bg-gray-700' : '' }}">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path
+                                    d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v1h8v-1zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-1a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v1h-3zM4.75 12.094A5.973 5.973 0 004 15v1H1v-1a3 3 0 013.75-2.906z" />
+                            </svg>
+                            <span class="ms-3">Clientes</span>
+                        </a>
+                    </li>
+                    <!-- Medicamentos -->
+                    <li>
+                        <a href="{{ route('medicamentos.index') }}"
+                            class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('medicamentos.*') ? 'bg-gray-700' : '' }}">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 2V5h1v1H5zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zm2 2v-1h1v1H5zM13 3a1 1 0 00-1 1v3a1 1 0 001 1h3a1 1 0 001-1V4a1 1 0 00-1-1h-3zm1 2v1h1V5h-1zM11 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3zm2 2v-1h1v1h-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="ms-3">Medicamentos</span>
+                        </a>
+                    </li>
+                    <!-- Productos -->
+                    <li>
+                        <a href="{{ route('productos.index') }}"
+                            class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('productos.*') ? 'bg-gray-700' : '' }}">
+                            <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                                <path fill-rule="evenodd"
+                                    d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <span class="ms-3">Productos</span>
+                        </a>
+                    </li>
+                @endif
             <!-- Inventario -->
             <li>
                 <a href="{{ route('inventario.index') }}"
@@ -129,19 +161,21 @@
                         <path
                             d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
                     </svg>
-                    <span class="ms-3">Inventario</span>
+                    <span class="ms-3">Lista de productos de empresa</span>
                 </a>
             </li>
 
-            {{-- cotizaciones --}}
-            <a href="{{ route('cotizaciones.index') }}"
-                class="{{ request()->routeIs('cotizaciones.*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700' }} flex items-center gap-3 px-4 py-2.5 rounded-lg transition text-sm font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z" />
-                </svg>
-                Cotizaciones
-            </a>
+            @if (auth()->user()->esAdmin())
+                {{-- cotizaciones --}}
+                <a href="{{ route('cotizaciones.index') }}"
+                    class="{{ request()->routeIs('cotizaciones.*') ? 'bg-blue-700 text-white' : 'text-blue-100 hover:bg-blue-700' }} flex items-center gap-3 px-4 py-2.5 rounded-lg transition text-sm font-medium">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Cotizaciones
+                </a>
+            @endif
             <!-- Alertas -->
             <li>
                 <a href="{{ route('alertas.index') }}"
@@ -154,40 +188,169 @@
                     <span class="ms-3">Alertas</span>
                 </a>
             </li>
-            <!-- OCR -->
+
+            <hr class="my-4 border-gray-700">
+            <p class="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Auditoría</p>
+
+            <!-- Bajas de Medicamentos -->
             <li>
-                <a href="{{ route('ocr.index') }}"
-                    class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('ocr.index') ? 'bg-gray-700' : '' }}">
-                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                <a href="{{ route('historial-bajas.index') }}"
+                    class="flex items-center p-2 rounded-lg text-white hover:bg-red-600 group {{ request()->routeIs('historial-bajas.index') ? 'bg-red-600 shadow-lg' : '' }} transition-all duration-200">
+                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    <span class="ms-3">Detección OCR</span>
+                    <span class="ms-3">Bajas de Medicamentos</span>
                 </a>
             </li>
 
-            <!-- Historial OCR -->
-            <li>
-                <a href="{{ route('ocr.historial') }}"
-                    class="flex items-center p-2 rounded-lg text-white hover:bg-gray-700 group {{ request()->routeIs('ocr.historial') ? 'bg-gray-700' : '' }}">
-                    <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="currentColor"
-                        viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                            clip-rule="evenodd" />
-                    </svg>
-                    <span class="ms-3">Historial OCR</span>
-                </a>
-            </li>
+            @if (auth()->user()->esAdmin())
+                <!-- Reportes de Ventas -->
+                <li>
+                    <a href="{{ route('reportes.ventas') }}"
+                        class="flex items-center p-2 rounded-lg text-white hover:bg-indigo-600 group {{ request()->routeIs('reportes.ventas') ? 'bg-indigo-600 shadow-lg' : '' }} transition-all duration-200">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414A1 1 0 0119 9.414V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <span class="ms-3">Reporte de Ventas</span>
+                    </a>
+                </li>
+            @endif
 
         </div>
     </aside>
 
     <!-- Contenido principal -->
-    <div class="sm:ml-64 min-h-screen">
+    <div class="sm:ml-64 min-h-screen flex flex-col">
+
+        <!-- Banner de Alerta Global -->
+        @php
+            $vencidosCount = $globalVencidosCount ?? 0;
+            $proximosCount = $globalProximosCount ?? 0;
+        @endphp
+
+        @if($vencidosCount > 0 || $proximosCount > 0)
+            @php
+                $hasVencidos = $vencidosCount > 0;
+                $bgColor = $hasVencidos ? 'bg-red-600' : 'bg-orange-500';
+                $btnColor = $hasVencidos ? 'text-red-600' : 'text-orange-600';
+            @endphp
+            <div id="voice-alert-banner" class="{{ $bgColor }} text-white px-6 py-2 flex items-center justify-between shadow-lg z-50 animate-pulse">
+                <div class="flex items-center gap-3">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                    </svg>
+                    <span class="font-bold tracking-wide">
+                        @if($hasVencidos)
+                            ATENCIÓN: Tienes {{ $vencidosCount }} medicamentos vencidos que requieren acción inmediata.
+                        @else
+                            AVISO: Tienes {{ $proximosCount }} medicamentos por vencer pronto.
+                        @endif
+                    </span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="repetirVoz()" class="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-full transition-colors mr-2" title="Repetir Alerta de Voz">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 14.828a1 1 0 01-1.414-1.414 4 4 0 000-5.656 1 1 0 011.414-1.414 6 6 0 010 8.486z" clip-rule="evenodd"/>
+                        </svg>
+                    </button>
+                    <a href="{{ route('alertas.index') }}" class="bg-white {{ $btnColor }} px-4 py-1 rounded-full text-xs font-black uppercase hover:bg-gray-100 transition-colors">
+                        Ver Detalles
+                    </a>
+                    <button onclick="document.getElementById('voice-alert-banner').remove()" class="text-white/80 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Si acabamos de loguearnos, forzamos el reinicio de la alerta
+                    @if(session('login_success'))
+                        sessionStorage.removeItem('voice_alert_played');
+                        console.log("🔐 Login detectado: Reiniciando alerta de voz.");
+                    @endif
+
+                    const getBestVoice = () => {
+                        const voices = window.speechSynthesis.getVoices();
+                        // 1. Buscar voces de Google (suelen ser más naturales)
+                        let voice = voices.find(v => v.lang.includes('es') && v.name.includes('Google'));
+                        // 2. Buscar voces "Neural" o de Microsoft que suelen ser buenas
+                        if (!voice) voice = voices.find(v => v.lang.includes('es') && (v.name.includes('Neural') || v.name.includes('Helena')));
+                        // 3. Cualquier voz en español
+                        if (!voice) voice = voices.find(v => v.lang.includes('es'));
+                        return voice;
+                    };
+
+                    const speakAlert = () => {
+                        if (sessionStorage.getItem('voice_alert_played')) return;
+
+                        const vencidos = {{ $vencidosCount }};
+                        const proximos = {{ $proximosCount }};
+                        
+                        if (vencidos === 0 && proximos === 0) return;
+
+                        let texto = "";
+                        if (vencidos > 0) {
+                            texto += "Atención. Tiene medicamentos vencidos. ";
+                        }
+                        if (proximos > 0) {
+                            texto += "Aviso. Tiene medicamentos por vencer. ";
+                        }
+
+                        console.log("📢 Intentando alerta de voz: " + texto);
+                        
+                        window.speechSynthesis.cancel(); 
+                        
+                        const message = new SpeechSynthesisUtterance(texto);
+                        
+                        // Configuración para voz más natural
+                        const selectedVoice = getBestVoice();
+                        if (selectedVoice) {
+                            message.voice = selectedVoice;
+                            console.log("🎙️ Voz seleccionada: " + selectedVoice.name);
+                        }
+
+                        message.lang = 'es-ES';
+                        message.rate = 0.95; // Un poco más lento suele sonar mejor
+                        message.pitch = 1.0;
+                        message.volume = 1.0;
+
+                        message.onstart = () => {
+                            console.log("✅ La voz ha iniciado correctamente.");
+                            sessionStorage.setItem('voice_alert_played', 'true');
+                        };
+
+                        message.onerror = (event) => {
+                            console.error("❌ Error en SpeechSynthesis:", event.error);
+                        };
+                        
+                        window.speechSynthesis.speak(message);
+                    };
+
+                    // Las voces se cargan de forma asíncrona en algunos navegadores
+                    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+                        window.speechSynthesis.onvoiceschanged = () => {
+                            console.log("🔊 Voces cargadas. Disponibles: " + window.speechSynthesis.getVoices().length);
+                        };
+                    }
+
+                    // Intento 1: Automático tras 1.5s
+                    setTimeout(speakAlert, 1500);
+
+                    // Intento 2: Al primer clic
+                    document.addEventListener('click', function() {
+                        if (!sessionStorage.getItem('voice_alert_played')) {
+                            speakAlert();
+                        }
+                    }, { once: true });
+                });
+
+                function repetirVoz() {
+                    sessionStorage.removeItem('voice_alert_played');
+                    location.reload();
+                }
+            </script>
+        @endif
 
         <!-- Topbar -->
         <nav class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">

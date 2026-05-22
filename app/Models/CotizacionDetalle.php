@@ -14,6 +14,7 @@ class CotizacionDetalle extends Model
         'producto_id',
         'inventario_id',
         'lote', // <--- AGREGA ESTA LÍNEA
+        'lotes_descontados',
         'nro_item',
         'cantidad',
         'precio_unitario',
@@ -25,6 +26,7 @@ class CotizacionDetalle extends Model
         return [
             'precio_unitario' => 'decimal:2',
             'precio_total'    => 'decimal:2',
+            'lotes_descontados' => 'array',
         ];
     }
 

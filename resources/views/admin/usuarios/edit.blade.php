@@ -76,17 +76,7 @@
                             </svg>
                         </button>
                     </div>
-                    <!-- Requisitos -->
-                    <ul class="mt-2 text-xs space-y-1" id="requisitos">
-                        <li id="req-longitud" class="text-red-500">✗ Mínimo 8 caracteres</li>
-                        <li id="req-mayuscula" class="text-red-500">✗ Al menos una mayúscula</li>
-                        <li id="req-minuscula" class="text-red-500">✗ Al menos una minúscula</li>
-                        <li id="req-numero" class="text-red-500">✗ Al menos un número</li>
-                        <li id="req-especial" class="text-red-500">✗ Al menos un carácter especial (@$!%*?&)</li>
-                    </ul>
-                    @error('password')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    
                 </div>
 
                 <!-- Confirmar Contraseña -->

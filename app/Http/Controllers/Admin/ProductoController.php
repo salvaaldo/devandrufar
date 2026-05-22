@@ -7,6 +7,7 @@ use App\Http\Requests\StoreProductoRequest;
 use App\Http\Requests\UpdateProductoRequest;
 use App\Models\Producto;
 use App\Services\ProductoService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -15,9 +16,20 @@ class ProductoController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $productos = $this->productoService->listar();
+        $search = $request->input('search');
+        $query = Producto::with('medicamento')->orderBy('nombre');
+
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nombre', 'LIKE', "%{$search}%")
+                  ->orWhere('codigo', 'LIKE', "%{$search}%")
+                  ->orWhere('marca', 'LIKE', "%{$search}%");
+            });
+        }
+
+        $productos = $query->paginate(15)->withQueryString();
         return view('admin.productos.index', compact('productos'));
     }
 
@@ -60,5 +72,15 @@ class ProductoController extends Controller
             return response()->json($medicamento);
         }
         return response()->json(null, 404);
+    }
+
+    public function pdf()
+    {
+        $productos = Producto::with('medicamento')->orderBy('nombre')->get();
+
+        $pdf = Pdf::loadView('admin.productos.pdf', compact('productos'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('catalogo-productos-' . now()->format('d-m-Y') . '.pdf');
     }
 }
