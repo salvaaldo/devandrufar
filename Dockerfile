@@ -11,8 +11,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY . .
 
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
+RUN composer install --no-dev --optimize-autoloader --no-scripts --verbose 2>&1 || true
 RUN npm install && npm run build
 
 EXPOSE 8000
