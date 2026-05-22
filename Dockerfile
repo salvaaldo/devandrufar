@@ -1,4 +1,3 @@
-cat > Dockerfile << 'EOF'
 FROM php:8.2-cli
 
 RUN apt-get update && apt-get install -y \
@@ -17,4 +16,3 @@ RUN php artisan config:cache && php artisan route:cache
 
 EXPOSE 8000
 CMD php artisan serve --host=0.0.0.0 --port=$PORT
-EOF
