@@ -11,9 +11,10 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('ci')->unique();
+            $table->string('ci')->unique()->nullable();
             $table->string('telefono')->nullable();
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable(); // ← AGREGAR ESTA LÍNEA
             $table->string('password');
             $table->enum('rol', ['admin', 'operador'])->default('operador');
             $table->boolean('activo')->default(true);

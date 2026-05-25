@@ -24,7 +24,7 @@
         <div class="h-full px-3 py-4 overflow-y-auto bg-gray-900">
 
             <!-- Logo -->
-            <div><img src="../images/logo.jpeg" alt="logo" style="width: 50%; height: auto;"></div>
+            <img src="{{ asset('images/logo.jpeg') }}" alt="logo" style="width: 50%; height: auto;">
             <div class="flex items-center ps-2 mb-6 mt-2">
                 <span class="self-center text-xl font-bold whitespace-nowrap text-white">Andrufar </span>
             </div>

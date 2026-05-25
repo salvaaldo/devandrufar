@@ -16,6 +16,8 @@ class Deteccion extends Model
         'fecha_detectada',
         'estado',
         'user_id',
+        'lote',
+
     ];
 
     public function user()

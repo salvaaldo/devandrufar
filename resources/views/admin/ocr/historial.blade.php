@@ -8,7 +8,8 @@
     <!-- Encabezado -->
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-semibold text-gray-700">Historial de Detecciones OCR</h2>
-        <a href="{{ route('ocr.index') }}" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2">
+        <a href="{{ route('ocr.index') }}"
+            class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2">
             + Nueva Detección
         </a>
     </div>
@@ -20,6 +21,7 @@
                 <tr>
                     <th class="px-6 py-3">#</th>
                     <th class="px-6 py-3">Nombre Detectado</th>
+                    <th class="px-6 py-3">Lote</th>
                     <th class="px-6 py-3">Fecha Detectada</th>
                     <th class="px-6 py-3">Estado</th>
                     <th class="px-6 py-3">Usuario</th>
@@ -31,6 +33,15 @@
                 <tr class="bg-white border-b hover:bg-gray-50">
                     <td class="px-6 py-4">{{ $loop->iteration }}</td>
                     <td class="px-6 py-4 font-medium text-gray-900">{{ $deteccion->nombre_detectado ?? '-' }}</td>
+                    <td class="px-6 py-4">
+                        @if($deteccion->lote)
+                            <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-bold border border-blue-200">
+                                {{ $deteccion->lote }}
+                            </span>
+                        @else
+                            <span class="text-gray-300">-</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4">{{ $deteccion->fecha_detectada ?? '-' }}</td>
                     <td class="px-6 py-4">
                         @if($deteccion->estado === 'VIGENTE')
@@ -48,7 +59,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-gray-400">No hay detecciones registradas.</td>
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-400">No hay detecciones registradas.</td>
                 </tr>
                 @endforelse
             </tbody>

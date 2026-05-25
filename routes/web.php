@@ -161,6 +161,7 @@ Route::middleware(['auth'])->group(function () {
                 'fecha_detectada'  => $request->input('fecha'),
                 'estado'           => $request->input('estado', 'DESCONOCIDO'),
                 'user_id'          => auth()->id() ?? 1,
+                'lote'             => $request->input('lote'), // ← agrega esta línea
             ]);
             return response()->json(['success' => true]);
         } catch (\Exception $e) {

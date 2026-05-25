@@ -86,7 +86,15 @@ class OcrController extends Controller
      */
     public function guardar(Request $request)
     {
-        return response()->json(['success' => true]);
+        \App\Models\Deteccion::create([
+        'nombre_detectado' => $request->nombre,
+        'fecha_detectada'  => $request->fecha,
+        'estado'           => $request->estado,
+        'lote'             => $request->lote,
+        'user_id'          => auth()->id(),
+    ]);
+
+    return response()->json(['success' => true]);
     }
 
     /**
