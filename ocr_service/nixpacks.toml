@@ -1,0 +1,10 @@
+[phases.setup]
+nixPkgs = ["python311", "libstdcxx5"]
+
+[phases.install]
+cmds = [
+  "pip install fastapi uvicorn easyocr pillow python-multipart opencv-python-headless torch torchvision"
+]
+
+[start]
+cmd = "uvicorn app:app --host=0.0.0.0 --port=$PORT"
