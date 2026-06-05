@@ -153,7 +153,7 @@ Route::middleware(['auth'])->group(function () {
     // =========================
     // OCR
     // =========================
-    Route::post('ocr/proxy-detectar', [OcrController::class, 'proxyDetectar']); // ✅ AGREGA ESTA
+    Route::post('ocr/proxy-detectar', [OcrController::class, 'proxyDetectar']); //  AGREGA ESTA
     Route::post('ocr/guardar', function (\Illuminate\Http\Request $request) {
         try {
             \App\Models\Deteccion::create([
