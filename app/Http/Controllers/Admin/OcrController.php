@@ -22,7 +22,7 @@ class OcrController extends Controller
      */
     public function buscarPorLote(Request $request)
     {
-        // 🔥 LIMPIEZA DEL LOTE
+        //  LIMPIEZA DEL LOTE
         $lote = strtoupper(trim($request->lote));
         $lote = preg_replace('/[^A-Z0-9]/', '', $lote);
 
@@ -33,13 +33,13 @@ class OcrController extends Controller
             ]);
         }
 
-        // 🔍 BUSCAR EXACTO
+        //  BUSCAR EXACTO
         $inventario = Inventario::with('producto')
             ->whereRaw('REPLACE(UPPER(lote), " ", "") = ?', [$lote])
             ->orderBy('fecha_vencimiento', 'asc')
             ->first();
 
-        // 🔁 SI NO ENCUENTRA → BUSCAR PARCIAL
+        // SI NO ENCUENTRA → BUSCAR PARCIAL
         if (!$inventario) {
             $inventario = Inventario::with('producto')
                 ->whereRaw('REPLACE(UPPER(lote), " ", "") LIKE ?', ['%' . $lote . '%'])
@@ -47,7 +47,7 @@ class OcrController extends Controller
                 ->first();
         }
 
-        // ❌ NO ENCONTRADO
+        // NO ENCONTRADO
         if (!$inventario) {
             return response()->json([
                 'encontrado'   => false,
@@ -56,7 +56,7 @@ class OcrController extends Controller
             ]);
         }
 
-        // 📊 CALCULAR ESTADO
+        // CALCULAR ESTADO
         $hoy           = Carbon::today();
         $fechaVenc     = Carbon::parse($inventario->fecha_vencimiento);
         $diasRestantes = $hoy->diffInDays($fechaVenc, false);
@@ -69,7 +69,7 @@ class OcrController extends Controller
             $estado = 'VIGENTE';
         }
 
-        // ✅ RESPUESTA
+        //  RESPUESTA
         return response()->json([
             'encontrado'        => true,
             'inventario_id'     => $inventario->id,
@@ -82,7 +82,7 @@ class OcrController extends Controller
     }
 
     /**
-     * 💾 Guardar detección OCR
+     *  Guardar detección OCR
      */
     public function guardar(Request $request)
     {
@@ -98,7 +98,7 @@ class OcrController extends Controller
     }
 
     /**
-     * ⚠️ Buscar lote vencido (modal baja)
+     *  Buscar lote vencido (modal baja)
      */
     public function buscarLoteVencido(Request $request)
     {
@@ -130,7 +130,7 @@ class OcrController extends Controller
     }
 
     /**
-     * 🗑️ Dar de baja lote → mover a historial_bajas
+     *  Dar de baja lote → mover a historial_bajas
      */
     public function darDeBaja(Request $request)
     {
@@ -168,7 +168,7 @@ class OcrController extends Controller
     }
 
     /**
-     * 🌐 Proxy hacia Python OCR
+     *  Proxy hacia Python OCR
      */
     public function proxyDetectar(Request $request)
     {
@@ -180,7 +180,7 @@ class OcrController extends Controller
                 'X-API-Key' => $apiKey,
                 'Accept'    => 'application/json',
             ])->timeout(45) // Aumentamos timeout para imágenes pesadas
-              ->post('http://127.0.0.1:5000/detectar', [
+              ->post(env('OCR_SERVICE_URL', 'http://127.0.0.1:5000') . '/detectar', [
                   'imagen' => $request->input('imagen')
               ]);
 
