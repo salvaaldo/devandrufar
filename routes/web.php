@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Cambiar contraseña obligatoria
     Route::get('password-change', [ProfileController::class, 'showPasswordChange'])->name('password.change');
-    Route::post('password-change', [ProfileController::class, 'updatePassword'])->name('password.update');
+    Route::post('password-change', [ProfileController::class, 'updatePassword'])->name('password.change.update');
 
     // =========================
     // DASHBOARD
