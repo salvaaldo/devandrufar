@@ -1,3 +1,0 @@
-def sistema_ocr(texto_o_imagen):
-    # ... tu lógica ...
-    return "TEST_LOTE"  # <--- Si esto está así, ¡aquí está el culpable!

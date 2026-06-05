@@ -437,9 +437,9 @@
 
             {{-- Tabs modo --}}
             <div class="flex gap-2 mb-5">
-                <button onclick="setModo('webcam')" id="btn-webcam" class="modo-btn activo">📷 Webcam</button>
-                <button onclick="setModo('archivo')" id="btn-archivo" class="modo-btn">🖼 Imagen</button>
-                <button onclick="abrirBajaManual()" id="btn-manual" class="modo-btn">⌨ Baja Manual</button>
+                <button onclick="setModo('webcam')" id="btn-webcam" class="modo-btn activo"> Webcam</button>
+                <button onclick="setModo('archivo')" id="btn-archivo" class="modo-btn">Imagen</button>
+                <button onclick="abrirBajaManual()" id="btn-manual" class="modo-btn">Baja Manual</button>
             </div>
 
             {{-- Webcam --}}
@@ -466,7 +466,7 @@
 
                     <div id="guia-badge" class="guia-badge">📷 Acerque el medicamento · Toque para enfocar</div>
                     <div id="chip-estabilizando" class="status-chip amarillo">⏳ Mantenga quieto...</div>
-                    <div id="chip-capturando" class="status-chip verde">✅ Capturando...</div>
+                    <div id="chip-capturando" class="status-chip verde">Capturando...</div>
                 </div>
 
                 {{-- Botones principales --}}
@@ -526,7 +526,7 @@
         {{-- Panel derecho: Resultados --}}
         <div class="ocr-card p-6">
             <div class="flex items-center justify-between mb-5">
-                <h2 class="text-base font-bold text-gray-800">🔍 Resultados OCR</h2>
+                <h2 class="text-base font-bold text-gray-800"> Resultados OCR</h2>
                 <span id="badge-estado-resultado"
                     class="text-xs font-medium text-gray-400 bg-gray-100 px-3 py-1 rounded-full">Esperando...</span>
             </div>
@@ -566,17 +566,17 @@
 
                 <div class="space-y-3 mb-4">
                     <div class="resultado-field" id="campo-fecha">
-                        <label>📅 Fecha de Vencimiento</label>
+                        <label>Fecha de Vencimiento</label>
                         <div class="valor vacio" id="resultado-fecha">No detectada</div>
                     </div>
                     <div class="resultado-field" id="campo-nombre">
-                        <label>💊 Medicamento</label>
+                        <label>Medicamento</label>
                         <div class="valor vacio text-sm" id="resultado-nombre">No detectado</div>
                     </div>
                 </div>
 
                 <button id="btn-guardar" onclick="guardarDeteccion()" class="btn-guardar hidden">
-                    💾 Guardar en sistema
+                    Guardar en sistema
                 </button>
                 <button onclick="limpiarResultados()" class="btn-nueva">
                     🔄 Escanear otro medicamento
@@ -588,7 +588,7 @@
     {{-- Historial --}}
     <div class="ocr-card p-6 mt-6">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-bold text-gray-800">📋 Historial de Detecciones</h2>
+            <h2 class="text-base font-bold text-gray-800">Historial de Detecciones</h2>
             <span class="text-xs text-gray-400">Sesión actual</span>
         </div>
         <div class="overflow-x-auto rounded-xl border border-gray-100">
@@ -632,7 +632,7 @@
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1.5">📅 Fecha de
+                    <label class="block text-xs font-semibold text-gray-500 uppercase mb-1.5"> Fecha de
                         vencimiento</label>
                     <input type="text" id="modal-fecha" placeholder="Ej: 07/2026"
                         class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-50">
@@ -640,7 +640,7 @@
                 </div>
             </div>
             <div class="flex flex-col gap-2">
-                <button onclick="guardarDesdeModal()" class="btn-guardar">💾 Guardar datos</button>
+                <button onclick="guardarDesdeModal()" class="btn-guardar">Guardar datos</button>
                 <button onclick="intentarDeNuevo()" class="btn-nueva">🔄 Intentar de nuevo</button>
                 <button onclick="cerrarModal()"
                     class="w-full text-gray-400 text-sm py-2 hover:text-gray-600 transition-colors">Cancelar</button>
@@ -673,7 +673,7 @@
                 <p class="text-xs text-gray-400">Buscando en productos de empresa...</p>
             </div>
             <div class="flex flex-col gap-2">
-                <button onclick="buscarLoteManual()" class="btn-guardar">🔍 Buscar Lote</button>
+                <button onclick="buscarLoteManual()" class="btn-guardar"> Buscar Lote</button>
                 <button onclick="cerrarBajaManual()"
                     class="w-full text-gray-400 text-sm py-2 hover:text-gray-600 transition-colors">Cancelar</button>
             </div>
@@ -695,7 +695,7 @@
                 <div class="mt-3 flex justify-center">
                     <span id="modal-vencido-precision"
                         class="text-[11px] font-bold px-3 py-1 bg-green-100 text-green-700 rounded-full border border-green-200 shadow-sm">
-                        🎯 Precisión IA: 99% (Verificado)
+                         Precisión IA: 99% (Verificado)
                     </span>
                 </div>
             </div>
@@ -728,7 +728,7 @@
             <div class="flex flex-col gap-2">
                 <button onclick="confirmarBaja()"
                     class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl py-3 text-sm transition-all">
-                    🗑️ Dar de baja de los productos
+                    Dar de baja de los productos
                 </button>
                 <button onclick="cerrarModalVencido()"
                     class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold rounded-xl py-3 text-sm transition-all">
@@ -1022,17 +1022,17 @@
                 if (pct >= 90) {
                     barra.className = 'h-2 rounded-full transition-all duration-1000 ease-out bg-green-500';
                     textoPct.className = 'text-sm font-black text-green-600';
-                    textoDetalle.textContent = '✅ Alta confianza: Medicamento identificado correctamente.';
+                    textoDetalle.textContent = 'Alta confianza: Medicamento identificado correctamente.';
                 } else if (pct >= 50) {
                     barra.className = 'h-2 rounded-full transition-all duration-1000 ease-out bg-yellow-400';
                     textoPct.className = 'text-sm font-black text-yellow-600';
-                    textoDetalle.textContent = '⚠️ Confianza media: Faltan datos, verifique visualmente.';
+                    textoDetalle.textContent = 'Confianza media: Faltan datos, verifique visualmente.';
                 } else {
                     barra.className = 'h-2 rounded-full transition-all duration-1000 ease-out bg-red-500';
                     textoPct.className = 'text-sm font-black text-red-600';
                     textoDetalle.textContent = pct === 0 ?
-                        '❌ No se pudo identificar el medicamento.' :
-                        '❌ Lectura dudosa o lote inexistente.';
+                        'No se pudo identificar el medicamento.' :
+                        'Lectura dudosa o lote inexistente.';
                 }
             }, 100);
         }
@@ -1168,7 +1168,7 @@
                         document.getElementById('modal-vencido-titulo').textContent = data.estado === 'VENCIDO' ?
                             '⚠️ Lote Vencido Detectado' : '🟡 Lote Próximo a Vencer';
                         document.getElementById('modal-vencido-precision').innerHTML =
-                            '🎯 Precisión IA: 99% (Verificado en BD)';
+                            'Precisión IA: 99% (Verificado en BD)';
                         document.getElementById('modal-vencido').classList.add('visible');
                     }
                 } else {
@@ -1201,7 +1201,7 @@
             }).then(r => r.json()).then(d => {
                 if (d.success) {
                     document.getElementById('btn-guardar').classList.add('hidden');
-                    document.getElementById('btn-guardar').textContent = '✅ Guardado';
+                    document.getElementById('btn-guardar').textContent = ' Guardado';
                 }
             }).catch(e => console.error(e));
         }
@@ -1281,7 +1281,7 @@
             }).then(r => r.json()).then(d => {
                 if (d.success) {
                     cerrarModalVencido();
-                    if (confirm('✅ Lote dado de baja correctamente. ¿Deseas ver el historial de bajas ahora?')) {
+                    if (confirm('Lote dado de baja correctamente. ¿Deseas ver el historial de bajas ahora?')) {
                         window.location.href = "{{ route('historial-bajas.index') }}";
                     }
                 }
