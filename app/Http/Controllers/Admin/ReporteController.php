@@ -8,8 +8,18 @@ use App\Models\Cotizacion;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
+/**
+ * Controlador de Reportes y Estadísticas.
+ * Administra las consultas financieras, estadísticas operativas de usuarios
+ * y exportación de reportes PDF de ventas e inventario vencido.
+ */
 class ReporteController extends Controller
 {
+    /**
+     * Genera y transmite el PDF de productos vencidos en el inventario.
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function vencidosPdf()
     {
         $vencidos = Inventario::with('producto')
@@ -23,12 +33,19 @@ class ReporteController extends Controller
         return $pdf->stream('reporte-vencidos-' . now()->format('d-m-Y') . '.pdf');
     }
 
+    /**
+     * Muestra las estadísticas de ventas/cotizaciones de un periodo y estadísticas de desempeño de usuarios.
+     * Calcula ventas totales filtrando las cotizaciones anuladas.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View
+     */
     public function ventas(Request $request)
     {
         $mes = $request->input('mes', now()->month);
         $anio = $request->input('anio', now()->year);
 
-        // Ventas del periodo seleccionado
+        // Consultar ventas en el periodo de mes/año indicado (excluyendo cotizaciones anuladas)
         $query = Cotizacion::with(['cliente', 'user'])
             ->whereYear('created_at', $anio)
             ->whereMonth('created_at', $mes)
@@ -38,7 +55,7 @@ class ReporteController extends Controller
         $ventas = $query->get();
         $totalGeneral = $ventas->sum('total');
 
-        // Estadísticas por Usuario
+        // Obtener estadísticas de cotizaciones exitosas por usuario (Día, Semana, Mes actual)
         $usuariosStats = \App\Models\User::withCount([
             'cotizaciones as total_dia' => function ($q) {
                 $q->whereDate('created_at', now()->toDateString())->where('estado', '!=', 'anulada');
@@ -54,6 +71,12 @@ class ReporteController extends Controller
         return view('admin.reportes.ventas', compact('ventas', 'totalGeneral', 'mes', 'anio', 'usuariosStats'));
     }
 
+    /**
+     * Genera e inicia la transmisión de un reporte en PDF detallando las ventas de un mes/año seleccionado.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
     public function ventasPdf(Request $request)
     {
         $mes = $request->input('mes', now()->month);
