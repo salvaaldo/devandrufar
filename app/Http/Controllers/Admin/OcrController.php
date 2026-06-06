@@ -10,51 +10,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-/**
- * Controlador de OCR.
- * Administra la comunicación con el microservicio de reconocimiento de texto (FastAPI),
- * las búsquedas de lotes escaneados y el proceso de baja física de inventario vencido.
- */
 class OcrController extends Controller
 {
-    /**
-     * Muestra la vista principal del escáner OCR inteligente.
-     *
-     * @return \Illuminate\View\View
-     */
     public function index()
     {
         return view('admin.ocr.index');
     }
 
     /**
-     * 🔍 Busca un lote de inventario activo utilizando el código de lote detectado por el OCR.
-     * Realiza un saneamiento del texto de búsqueda eliminando caracteres especiales
-     * y ejecuta primero una búsqueda exacta; si no tiene éxito, aplica una búsqueda aproximada (LIKE).
-     *
-     * @param \Illuminate\Http\Request $request Petición conteniendo la cadena del lote.
-     * @return \Illuminate\Http\JsonResponse Datos del lote hallado y su clasificación de vencimiento actual.
+     *  Buscar por lote detectado por OCR
      */
     public function buscarPorLote(Request $request)
     {
-        // Limpieza del lote: remover espacios en blanco y caracteres no alfanuméricos
+        //  LIMPIEZA DEL LOTE
         $lote = strtoupper(trim($request->lote));
         $lote = preg_replace('/[^A-Z0-9]/', '', $lote);
 
         if (!$lote) {
             return response()->json([
                 'encontrado' => false,
-                'mensaje'    => 'No se recibió lote válido'
+                'mensaje' => 'No se recibió lote válido'
             ]);
         }
 
-        // 1. Intentar búsqueda exacta omitiendo espacios
+        //  BUSCAR EXACTO
         $inventario = Inventario::with('producto')
             ->whereRaw('REPLACE(UPPER(lote), " ", "") = ?', [$lote])
             ->orderBy('fecha_vencimiento', 'asc')
             ->first();
 
-        // 2. Si no se encuentra exacto, intentar coincidencia parcial
+        // SI NO ENCUENTRA → BUSCAR PARCIAL
         if (!$inventario) {
             $inventario = Inventario::with('producto')
                 ->whereRaw('REPLACE(UPPER(lote), " ", "") LIKE ?', ['%' . $lote . '%'])
@@ -62,7 +47,7 @@ class OcrController extends Controller
                 ->first();
         }
 
-        // Si el lote no existe en el sistema
+        // NO ENCONTRADO
         if (!$inventario) {
             return response()->json([
                 'encontrado'   => false,
@@ -71,7 +56,7 @@ class OcrController extends Controller
             ]);
         }
 
-        // Calcular estado temporal de vencimiento para la respuesta del escáner
+        // CALCULAR ESTADO
         $hoy           = Carbon::today();
         $fechaVenc     = Carbon::parse($inventario->fecha_vencimiento);
         $diasRestantes = $hoy->diffInDays($fechaVenc, false);
@@ -84,7 +69,7 @@ class OcrController extends Controller
             $estado = 'VIGENTE';
         }
 
-        // Retornar información estructurada del lote y producto para pintar en la UI
+        //  RESPUESTA
         return response()->json([
             'encontrado'        => true,
             'inventario_id'     => $inventario->id,
@@ -97,30 +82,23 @@ class OcrController extends Controller
     }
 
     /**
-     * Guarda la bitácora de detecciones OCR para auditoría interna y análisis del motor de IA.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     *  Guardar detección OCR
      */
     public function guardar(Request $request)
     {
         \App\Models\Deteccion::create([
-            'nombre_detectado' => $request->nombre,
-            'fecha_detectada'  => $request->fecha,
-            'estado'           => $request->estado,
-            'lote'             => $request->lote,
-            'user_id'          => auth()->id(),
-        ]);
+        'nombre_detectado' => $request->nombre,
+        'fecha_detectada'  => $request->fecha,
+        'estado'           => $request->estado,
+        'lote'             => $request->lote,
+        'user_id'          => auth()->id(),
+    ]);
 
-        return response()->json(['success' => true]);
+    return response()->json(['success' => true]);
     }
 
     /**
-     * Busca un lote que esté clasificado como "vencido" según el nombre aproximado del producto.
-     * Útil en el asistente de bajas rápidas por OCR.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     *  Buscar lote vencido (modal baja)
      */
     public function buscarLoteVencido(Request $request)
     {
@@ -130,7 +108,6 @@ class OcrController extends Controller
             return response()->json(['encontrado' => false]);
         }
 
-        // Búsqueda del primer lote vencido que coincida con el nombre del producto escaneado
         $inventario = Inventario::with('producto')
             ->whereHas('producto', function ($q) use ($nombre) {
                 $q->whereRaw('LOWER(nombre) LIKE ?', ['%' . strtolower($nombre) . '%']);
@@ -153,12 +130,7 @@ class OcrController extends Controller
     }
 
     /**
-     * Da de baja física a un lote vencido del sistema.
-     * Utiliza una transacción de base de datos para transferir la información del lote
-     * al historial de bajas y posteriormente borrarlo del inventario activo de forma segura.
-     *
-     * @param \Illuminate\Http\Request $request Petición que incluye lote_id y observaciones opcionales.
-     * @return \Illuminate\Http\JsonResponse
+     *  Dar de baja lote → mover a historial_bajas
      */
     public function darDeBaja(Request $request)
     {
@@ -172,22 +144,22 @@ class OcrController extends Controller
                 ]);
             }
 
-            // 1. Mover la información del lote al historial de bajas
+            // 1. Copiar a historial_bajas
             HistorialBaja::create([
-                'producto_id'       => $inventario->producto_id,
-                'user_id'           => auth()->id(),
-                'lote'              => $inventario->lote,
-                'cantidad'          => $inventario->cantidad,
+                'producto_id'      => $inventario->producto_id,
+                'user_id'          => auth()->id(),
+                'lote'             => $inventario->lote,
+                'cantidad'         => $inventario->cantidad,
                 'fecha_vencimiento' => $inventario->fecha_vencimiento,
-                'fecha_ingreso'     => $inventario->fecha_ingreso,
-                'motivo'            => 'vencido',
-                'observacion'       => $request->observacion ?? 'Baja automática por detección OCR',
+                'fecha_ingreso'    => $inventario->fecha_ingreso,
+                'motivo'           => 'vencido',
+                'observacion'      => $request->observacion ?? 'Baja automática por detección OCR',
             ]);
 
-            // 2. Eliminar físicamente el lote del inventario activo
+            // 2. Eliminar del inventario activo
             $inventario->delete();
 
-            // 3. Limpiar caché global de alertas de vencimiento
+            // 3. Limpiar caché de alertas
             \Illuminate\Support\Facades\Cache::forget('vencidos_count_global');
             \Illuminate\Support\Facades\Cache::forget('proximos_count_global');
 
@@ -196,11 +168,7 @@ class OcrController extends Controller
     }
 
     /**
-     * Proxy HTTP hacia el microservicio externo de Python OCR.
-     * Envía la imagen en base64 adjuntando las cabeceras de autorización requeridas por la API de FastAPI.
-     *
-     * @param \Illuminate\Http\Request $request Petición con la imagen codificada en base64.
-     * @return \Illuminate\Http\JsonResponse Respuesta del microservicio de OCR o estructura de error controlado.
+     *  Proxy hacia Python OCR
      */
     public function proxyDetectar(Request $request)
     {
@@ -208,11 +176,10 @@ class OcrController extends Controller
             // Clave secreta sincronizada con el servicio Python
             $apiKey = "Andrufar2026_Secure_OCR_Token_#!";
 
-            // Enviar petición POST HTTP hacia el servidor de Python
             $response = Http::withHeaders([
                 'X-API-Key' => $apiKey,
                 'Accept'    => 'application/json',
-            ])->timeout(45) // Amplio tiempo de espera debido al procesamiento de imágenes
+            ])->timeout(180) // Aumentamos timeout para imágenes pesadas
               ->post(env('OCR_SERVICE_URL', 'http://127.0.0.1:5000') . '/detectar', [
                   'imagen' => $request->input('imagen')
               ]);
@@ -227,7 +194,6 @@ class OcrController extends Controller
 
             return response()->json($response->json());
         } catch (\Exception $e) {
-            // Error controlado en caso de caída del microservicio FastAPI
             return response()->json([
                 'success' => false,
                 'error'   => 'El servicio OCR (Python) no está respondiendo. Verifique que el servidor de IA esté activo.'
@@ -235,4 +201,3 @@ class OcrController extends Controller
         }
     }
 }
-
